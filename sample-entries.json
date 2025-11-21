@@ -1,0 +1,182 @@
+{
+  "entries": [
+    {
+      "condition": {
+        "id": "cond-001",
+        "name": "Common Cold",
+        "synonyms": ["Upper respiratory infection", "Viral cold"],
+        "overview": "A self-limited viral infection of the upper respiratory tract with runny nose, sore throat, sneezing and cough.",
+        "symptoms": ["runny nose", "sore throat", "cough", "sneezing", "malaise"],
+        "red_flags": "High fever, difficulty breathing, chest pain, symptoms >14 days, or sudden worsening — seek medical care.",
+        "recommended_plants": ["plant-001"],
+        "evidence_level": "human_trial",
+        "references": ["https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3228576/"]
+      },
+      "plant": {
+        "id": "plant-001",
+        "scientific_name": "Echinacea purpurea",
+        "common_names": ["Echinacea", "Purple coneflower"],
+        "family": "Asteraceae",
+        "description": "Traditionally used to support immune function and reduce duration of upper respiratory infections.",
+        "phytochemicals": [
+          {
+            "name": "Alkamides",
+            "synonyms": ["alkylamides"],
+            "cas_number": null,
+            "pubchem_cid": null,
+            "known_actions": "Immune-modulating; interacts with CB2 and cytokine pathways.",
+            "notes": "Profile varies by plant part and species."
+          },
+          {
+            "name": "Cichoric acid",
+            "synonyms": ["cichoric acid"],
+            "cas_number": "70170-75-1",
+            "pubchem_cid": 5281775,
+            "known_actions": "Antioxidant; may influence immune signaling.",
+            "notes": ""
+          }
+        ],
+        "preparations": [
+          {
+            "method": "Tincture (1:5, 60% alcohol)",
+            "ingredients": "Fresh or dried root/above-ground parts; alcohol",
+            "dosage": "1–2 mL, 2–3 times daily for adults (traditional).",
+            "duration": "Short-term during acute illness; avoid long continuous use without supervision.",
+            "notes": "Commercial tinctures vary in concentration; follow label guidance."
+          },
+          {
+            "method": "Infusion (tea)",
+            "ingredients": "1–2 tsp dried herb per 250 mL boiling water",
+            "dosage": "1 cup 2–3 times daily",
+            "duration": "Short-term use for acute symptoms",
+            "notes": ""
+          }
+        ],
+        "harvesting": "Above-ground parts at flowering; roots in fall. Dry rapidly to prevent mold.",
+        "sustainability": "Prefer cultivated sources; avoid wild overharvesting.",
+        "contraindications": "Use cautiously in autoimmune disease; consult clinician if immunosuppressed.",
+        "pregnancy_lactation_warning": "Limited data; consult clinician before use.",
+        "evidence_level": "human_trial",
+        "images": [
+          {
+            "url": "https://example.com/images/echinacea_whole.jpg",
+            "alt_text": "Echinacea purpurea whole plant with purple flowers",
+            "type": "whole_plant"
+          }
+        ],
+        "references": [
+          "https://pubmed.ncbi.nlm.nih.gov/15230848/",
+          "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3228576/"
+        ]
+      }
+    },
+    {
+      "condition": {
+        "id": "cond-002",
+        "name": "Insomnia",
+        "synonyms": ["Difficulty sleeping", "Trouble falling asleep"],
+        "overview": "Difficulty initiating or maintaining sleep that impacts daytime functioning.",
+        "symptoms": ["difficulty falling asleep", "frequent awakenings", "non-restorative sleep"],
+        "red_flags": "Sudden onset with severe daytime impairment, medication interactions, or underlying psychiatric/medical conditions — seek medical evaluation.",
+        "recommended_plants": ["plant-002"],
+        "evidence_level": "human_trial",
+        "references": ["https://pubmed.ncbi.nlm.nih.gov/"]
+      },
+      "plant": {
+        "id": "plant-002",
+        "scientific_name": "Valeriana officinalis",
+        "common_names": ["Valerian"],
+        "family": "Caprifoliaceae",
+        "description": "Root traditionally used for sleep aid and mild anxiety relief.",
+        "phytochemicals": [
+          {
+            "name": "Valerenic acids",
+            "synonyms": [],
+            "cas_number": null,
+            "pubchem_cid": null,
+            "known_actions": "Proposed GABAergic modulation; CNS depressant effects.",
+            "notes": ""
+          }
+        ],
+        "preparations": [
+          {
+            "method": "Tincture",
+            "ingredients": "Root in alcohol",
+            "dosage": "0.5–2 mL before bedtime (follow product label)",
+            "duration": "Short-term use; discuss with clinician for chronic insomnia.",
+            "notes": "May interact with sedative medications and alcohol."
+          }
+        ],
+        "harvesting": "Roots in fall, when energy is highest; dry carefully.",
+        "sustainability": "Cultivated sources preferred.",
+        "contraindications": "Avoid with sedatives, benzodiazepines, heavy alcohol use; caution with liver disease.",
+        "pregnancy_lactation_warning": "Not recommended during pregnancy or breastfeeding without medical supervision.",
+        "evidence_level": "human_trial",
+        "images": [
+          {
+            "url": "https://example.com/images/valerian_root.jpg",
+            "alt_text": "Valeriana officinalis dried root",
+            "type": "processed"
+          }
+        ],
+        "references": [
+          "https://pubmed.ncbi.nlm.nih.gov/16379686/"
+        ]
+      }
+    },
+    {
+      "condition": {
+        "id": "cond-003",
+        "name": "Mild Anxiety",
+        "synonyms": ["Nervousness", "Situational anxiety"],
+        "overview": "Excessive worry or nervousness affecting daily activities; mild forms may be managed adjunctively with lifestyle and botanical approaches.",
+        "symptoms": ["worry", "restlessness", "muscle tension", "sleep disturbance"],
+        "red_flags": "Severe anxiety, panic attacks, suicidal ideation or functional impairment — seek professional help.",
+        "recommended_plants": ["plant-003"],
+        "evidence_level": "human_trial",
+        "references": []
+      },
+      "plant": {
+        "id": "plant-003",
+        "scientific_name": "Piper methysticum",
+        "common_names": ["Kava"],
+        "family": "Piperaceae",
+        "description": "Root traditionally used in Pacific islands for anxiety and relaxation.",
+        "phytochemicals": [
+          {
+            "name": "Kavalactones",
+            "synonyms": [],
+            "cas_number": null,
+            "pubchem_cid": null,
+            "known_actions": "CNS depressant, GABAergic modulation proposed.",
+            "notes": "Known hepatotoxicity risk in some preparations; quality & solvent matter."
+          }
+        ],
+        "preparations": [
+          {
+            "method": "Traditional aqueous preparation",
+            "ingredients": "Ground root mixed in water",
+            "dosage": "Traditional dosing varies; modern extracts differ—follow clinical guidance",
+            "duration": "Short-term use; avoid chronic high-dose use.",
+            "notes": "Potential for liver risk; contraindicated with alcohol and some medications."
+          }
+        ],
+        "harvesting": "Roots harvested from mature plants; sustainable cultivation recommended.",
+        "sustainability": "Cultivated sources help preserve wild populations.",
+        "contraindications": "Avoid with liver disease, alcohol, CNS depressants; review drug interactions.",
+        "pregnancy_lactation_warning": "Not recommended.",
+        "evidence_level": "human_trial",
+        "images": [
+          {
+            "url": "https://example.com/images/kava_root.jpg",
+            "alt_text": "Kava root and prepared kava drink",
+            "type": "processed"
+          }
+        ],
+        "references": [
+          "https://pubmed.ncbi.nlm.nih.gov/19535419/"
+        ]
+      }
+    }
+  ]
+}

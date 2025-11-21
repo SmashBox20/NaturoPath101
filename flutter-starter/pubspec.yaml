@@ -1,0 +1,17 @@
+name: naturo_path_101
+description: NaturoPath: 101 — plant-based remedies reference app (starter)
+version: 0.1.0
+environment:
+  sdk: ">=2.18.0 <3.0.0"
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  flutter_riverpod: ^2.0.0
+  http: ^0.13.0
+  hive: ^2.0.0
+  hive_flutter: ^1.1.0
+  flutter_secure_storage: ^7.0.0
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

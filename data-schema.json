@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NaturoPath Data Schema",
+  "type": "object",
+  "definitions": {
+    "Phytochemical": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "synonyms": { "type": "array", "items": { "type": "string" } },
+        "cas_number": { "type": ["string", "null"] },
+        "pubchem_cid": { "type": ["integer", "null"] },
+        "known_actions": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "Image": {
+      "type": "object",
+      "properties": {
+        "url": { "type": "string" },
+        "alt_text": { "type": "string" },
+        "type": { "type": "string", "enum": ["whole_plant","leaf","flower","fruit","processed","preparation"] }
+      },
+      "required": ["url", "alt_text"]
+    }
+  },
+  "properties": {
+    "condition": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "synonyms": { "type": "array", "items": { "type": "string" } },
+        "overview": { "type": "string" },
+        "symptoms": { "type": "array", "items": { "type": "string" } },
+        "red_flags": { "type": "string" },
+        "recommended_plants": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "evidence_level": { "type": "string", "enum": ["traditional","in_vitro","animal","human_trial","strong_clinical"] },
+        "references": { "type": "array", "items": { "type": "string", "format": "uri" } }
+      },
+      "required": ["id","name"]
+    },
+    "plant": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "scientific_name": { "type": "string" },
+        "common_names": { "type": "array", "items": { "type": "string" } },
+        "family": { "type": "string" },
+        "description": { "type": "string" },
+        "phytochemicals": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Phytochemical" }
+        },
+        "preparations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "method": { "type": "string" },
+              "ingredients": { "type": "string" },
+              "dosage": { "type": "string" },
+              "duration": { "type": "string" },
+              "notes": { "type": "string" }
+            },
+            "required": ["method"]
+          }
+        },
+        "harvesting": { "type": "string" },
+        "sustainability": { "type": "string" },
+        "contraindications": { "type": "string" },
+        "pregnancy_lactation_warning": { "type": "string" },
+        "evidence_level": { "type": "string", "enum": ["traditional","in_vitro","animal","human_trial","strong_clinical"] },
+        "images": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Image" }
+        },
+        "references": { "type": "array", "items": { "type": "string", "format": "uri" } }
+      },
+      "required": ["id","scientific_name"]
+    }
+  },
+  "required": ["condition","plant"]
+}

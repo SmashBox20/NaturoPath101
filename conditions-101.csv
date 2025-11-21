@@ -1,0 +1,102 @@
+id,name
+cond-001,Common cold
+cond-002,Influenza (flu)
+cond-003,Sinusitis
+cond-004,Allergic rhinitis (hay fever)
+cond-005,Acute bronchitis
+cond-006,Asthma (mild episodic)
+cond-007,Cough (non-specific)
+cond-008,Sore throat (pharyngitis)
+cond-009,Strep throat
+cond-010,Otitis media (ear infection)
+cond-011,Conjunctivitis (pink eye)
+cond-012,Tension headache
+cond-013,Migraine (acute)
+cond-014,Insomnia
+cond-015,Anxiety (generalized)
+cond-016,Depression (mild-to-moderate)
+cond-017,Stress-related fatigue
+cond-018,Irritable bowel syndrome (IBS)
+cond-019,Indigestion / dyspepsia
+cond-020,Acid reflux / GERD (mild)
+cond-021,Nausea / motion sickness
+cond-022,Acute diarrhea
+cond-023,Constipation
+cond-024,Bloating and gas
+cond-025,Hemorrhoids
+cond-026,Urinary tract infection (UTI)
+cond-027,Vaginal yeast infection (candidiasis)
+cond-028,Bacterial vaginosis
+cond-029,Menstrual cramps (dysmenorrhea)
+cond-030,Premenstrual syndrome (PMS)
+cond-031,Menopausal symptoms (hot flashes, night sweats)
+cond-032,Acne (mild-to-moderate)
+cond-033,Eczema (atopic dermatitis)
+cond-034,Psoriasis (mild)
+cond-035,Rosacea
+cond-036,Fungal skin infections (tinea / athlete's foot)
+cond-037,Fungal nail infections (onychomycosis)
+cond-038,Warts (common)
+cond-039,Cold sores (herpes labialis)
+cond-040,Minor wound care (cuts & abrasions)
+cond-041,Minor burns / sunburn
+cond-042,Insect bites & stings
+cond-043,Allergic contact dermatitis
+cond-044,Muscle strain & sprain
+cond-045,Low back pain (mechanical)
+cond-046,Osteoarthritis (mild-to-moderate)
+cond-047,Rheumatoid arthritis (symptom adjunct)
+cond-048,Gout (acute)
+cond-049,Tendinitis
+cond-050,Sinus headache
+cond-051,Toothache (temporary symptomatic relief)
+cond-052,Halitosis (bad breath)
+cond-053,Dry mouth (xerostomia)
+cond-054,Eye strain / dry eyes
+cond-055,Dandruff / seborrheic dermatitis
+cond-056,Hair loss (support)
+cond-057,Bruises & contusions
+cond-058,Cold & flu prevention (immune support)
+cond-059,High blood pressure (mild, lifestyle adjunct)
+cond-060,High cholesterol (adjunct lifestyle)
+cond-061,Type 2 diabetes (adjunct support)
+cond-062,Metabolic syndrome (adjunct)
+cond-063,Weight management support
+cond-064,Circulation issues / poor peripheral circulation
+cond-065,Varicose veins (supportive)
+cond-066,Peripheral neuropathy symptom support (mild)
+cond-067,Migraine prevention
+cond-068,Restless leg syndrome (RLS)
+cond-069,Fibromyalgia symptom support
+cond-070,Memory & cognitive support (mild)
+cond-071,Focus & concentration support
+cond-072,Seasonal affective disorder (SAD)
+cond-073,Jet lag
+cond-074,Hangover relief (symptomatic)
+cond-075,Smoking cessation support (adjunct)
+cond-076,Canker sores (aphthous ulcers)
+cond-077,Tonsillitis
+cond-078,Laryngitis
+cond-079,Voice strain
+cond-080,Earwax (cerumen) management
+cond-081,Head lice
+cond-082,Impetigo (minor skin bacterial infection)
+cond-083,Shingles (herpes zoster) symptom relief
+cond-084,Cold-induced chilblains
+cond-085,Nail brittleness / brittle nails
+cond-086,Oral thrush (oral candidiasis)
+cond-087,Yeast diaper rash (infants)
+cond-088,Infant colic
+cond-089,Lactation / milk flow support
+cond-090,Erectile dysfunction (adjunct)
+cond-091,Sexual health / libido support (adjunct)
+cond-092,Menstrual irregularities (adjunct)
+cond-093,Fertility support (adjunct)
+cond-094,Detoxification support (adjunct)
+cond-095,Immune boosting for recurrent infections
+cond-096,Atopic flare support (general)
+cond-097,Postpartum recovery support
+cond-098,Burnout & adrenal support
+cond-099,General adaptogen / resilience support
+cond-100,Wellness / daily tonic (general health support)
+cond-101,Preventive herbal strategies (seasonal planning)

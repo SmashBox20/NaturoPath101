@@ -1,0 +1,368 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NaturoPath Data Schema",
+  "version": "1.0.0",
+  "definitions": {
+    "evidenceLevel": {
+      "type": "string",
+      "enum": [
+        "traditional",
+        "in_vitro",
+        "animal",
+        "human_trial",
+        "strong_clinical"
+      ],
+      "description": "Level of scientific evidence supporting the claim"
+    },
+    "reference": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["pubmed", "pharmacopeia", "traditional", "clinical_trial", "review", "other"]
+        },
+        "id": {
+          "type": "string",
+          "description": "PubMed ID, DOI, or other identifier"
+        },
+        "title": {
+          "type": "string"
+        },
+        "authors": {
+          "type": "string"
+        },
+        "year": {
+          "type": "integer"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": ["type", "title"]
+    },
+    "phytochemical": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "chemicalClass": {
+          "type": "string",
+          "description": "e.g., alkaloid, flavonoid, terpene, phenolic"
+        },
+        "pubchemId": {
+          "type": "string"
+        },
+        "casNumber": {
+          "type": "string"
+        },
+        "proposedMechanism": {
+          "type": "string"
+        },
+        "concentration": {
+          "type": "string",
+          "description": "Typical concentration in plant material"
+        }
+      },
+      "required": ["name"]
+    },
+    "preparationMethod": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["tea", "infusion", "decoction", "tincture", "extract", "poultice", "topical", "essential_oil", "capsule", "powder"]
+        },
+        "instructions": {
+          "type": "string"
+        },
+        "dosage": {
+          "type": "string"
+        },
+        "frequency": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "required": ["method", "instructions"]
+    },
+    "contraindication": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": ["pregnancy", "lactation", "children", "autoimmune", "anticoagulants", "cyp_interaction", "kidney_disease", "liver_disease", "surgery", "other"]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["mild", "moderate", "severe", "contraindicated"]
+        },
+        "description": {
+          "type": "string"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/reference"
+          }
+        }
+      },
+      "required": ["category", "severity", "description"]
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "altText": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        },
+        "imageType": {
+          "type": "string",
+          "enum": ["whole_plant", "leaf", "flower", "root", "bark", "seed", "fruit", "habitat"]
+        },
+        "thumbnailUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "attribution": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        }
+      },
+      "required": ["url", "altText", "imageType"]
+    },
+    "plant": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "scientificName": {
+          "type": "string"
+        },
+        "commonNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "family": {
+          "type": "string",
+          "description": "Taxonomic family"
+        },
+        "genus": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/image"
+          }
+        },
+        "phytochemicals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/phytochemical"
+          }
+        },
+        "preparationMethods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/preparationMethod"
+          }
+        },
+        "contraindications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contraindication"
+          }
+        },
+        "harvestingGuidance": {
+          "type": "object",
+          "properties": {
+            "partUsed": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "harvestSeason": {
+              "type": "string"
+            },
+            "sustainabilityNotes": {
+              "type": "string"
+            },
+            "cultivationDifficulty": {
+              "type": "string",
+              "enum": ["easy", "moderate", "difficult"]
+            }
+          }
+        },
+        "evidenceLevel": {
+          "$ref": "#/definitions/evidenceLevel"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/reference"
+          }
+        },
+        "lastReviewedDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "reviewedBy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Advisory board member IDs"
+        }
+      },
+      "required": ["id", "scientificName", "commonNames", "description", "evidenceLevel"]
+    },
+    "condition": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "synonyms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "icdCodes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "ICD-10 or similar codes for searchability"
+        },
+        "overview": {
+          "type": "string"
+        },
+        "symptoms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "redFlags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "When to seek immediate medical care"
+        },
+        "recommendedPlants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "plantId": {
+                "type": "string"
+              },
+              "usage": {
+                "type": "string"
+              },
+              "evidenceLevel": {
+                "$ref": "#/definitions/evidenceLevel"
+              }
+            },
+            "required": ["plantId", "usage"]
+          }
+        },
+        "evidenceLevel": {
+          "$ref": "#/definitions/evidenceLevel"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/reference"
+          }
+        },
+        "lastReviewedDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "reviewedBy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["id", "name", "overview", "symptoms", "redFlags", "recommendedPlants", "evidenceLevel"]
+    },
+    "interaction": {
+      "type": "object",
+      "description": "Drug-herb interaction data for Medicine Cabinet feature",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "plantId": {
+          "type": "string"
+        },
+        "drugName": {
+          "type": "string"
+        },
+        "activeIngredient": {
+          "type": "string"
+        },
+        "rxNormCode": {
+          "type": "string"
+        },
+        "interactionType": {
+          "type": "string",
+          "enum": ["additive", "antagonistic", "potentiation", "cyp_inhibition", "cyp_induction", "absorption_interference", "unknown"]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["minor", "moderate", "major", "contraindicated"]
+        },
+        "mechanism": {
+          "type": "string"
+        },
+        "clinicalSignificance": {
+          "type": "string"
+        },
+        "recommendation": {
+          "type": "string"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/reference"
+          }
+        }
+      },
+      "required": ["id", "plantId", "drugName", "severity", "recommendation"]
+    }
+  }
+}

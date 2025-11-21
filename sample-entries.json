@@ -1,0 +1,581 @@
+{
+  "conditions": [
+    {
+      "id": "cond_001_common_cold",
+      "name": "Common Cold",
+      "synonyms": ["Upper Respiratory Infection", "URI", "Head Cold", "Acute Viral Rhinopharyngitis"],
+      "icdCodes": ["J00"],
+      "overview": "The common cold is a viral infection of the upper respiratory tract, primarily affecting the nose and throat. It is one of the most frequent illnesses, with adults experiencing 2-3 colds per year on average. While uncomfortable, colds are generally self-limiting and resolve within 7-10 days.",
+      "symptoms": [
+        "Runny or stuffy nose",
+        "Sore throat",
+        "Cough",
+        "Sneezing",
+        "Mild headache",
+        "Low-grade fever (rare in adults)",
+        "Fatigue",
+        "Watery eyes"
+      ],
+      "redFlags": [
+        "Fever above 101.3°F (38.5°C) lasting more than 3 days",
+        "Symptoms persisting beyond 10 days without improvement",
+        "Severe headache or facial pain (possible sinusitis)",
+        "Difficulty breathing or shortness of breath",
+        "Chest pain",
+        "Symptoms in infants under 3 months"
+      ],
+      "recommendedPlants": [
+        {
+          "plantId": "plant_001_echinacea",
+          "usage": "Take at the first sign of cold symptoms. May reduce duration and severity when taken early.",
+          "evidenceLevel": "human_trial"
+        }
+      ],
+      "evidenceLevel": "human_trial",
+      "references": [
+        {
+          "type": "review",
+          "id": "PMID:24554461",
+          "title": "Echinacea for preventing and treating the common cold",
+          "authors": "Karsch-Völk M, Barrett B, Kiefer D, et al.",
+          "year": 2014,
+          "url": "https://pubmed.ncbi.nlm.nih.gov/24554461/"
+        }
+      ],
+      "lastReviewedDate": "2024-01-15",
+      "reviewedBy": ["advisor_001", "advisor_002"]
+    },
+    {
+      "id": "cond_002_insomnia",
+      "name": "Insomnia",
+      "synonyms": ["Sleep Disorder", "Sleeplessness", "Sleep Disturbance"],
+      "icdCodes": ["G47.0", "F51.0"],
+      "overview": "Insomnia is characterized by difficulty falling asleep, staying asleep, or waking too early and being unable to return to sleep. It can be acute (short-term) or chronic (lasting three months or longer). Chronic insomnia affects approximately 10-15% of adults and can significantly impact quality of life, mood, and daytime functioning.",
+      "symptoms": [
+        "Difficulty falling asleep despite being tired",
+        "Waking frequently during the night",
+        "Waking too early in the morning",
+        "Non-restorative sleep",
+        "Daytime fatigue",
+        "Irritability or mood changes",
+        "Difficulty concentrating",
+        "Increased errors or accidents"
+      ],
+      "redFlags": [
+        "Symptoms of sleep apnea (loud snoring, gasping for air during sleep)",
+        "Persistent insomnia despite good sleep hygiene",
+        "Significant daytime impairment affecting work or safety",
+        "Symptoms of depression or anxiety",
+        "Use of alcohol or sedatives to sleep",
+        "Restless legs or periodic limb movements"
+      ],
+      "recommendedPlants": [
+        {
+          "plantId": "plant_002_valerian",
+          "usage": "Take 300-600mg of valerian root extract 30 minutes to 2 hours before bedtime. May improve sleep quality and reduce time to fall asleep.",
+          "evidenceLevel": "human_trial"
+        }
+      ],
+      "evidenceLevel": "human_trial",
+      "references": [
+        {
+          "type": "review",
+          "id": "PMID:16335332",
+          "title": "Valerian for sleep: a systematic review and meta-analysis",
+          "authors": "Fernández-San-Martín MI, Masa-Font R, Palacios-Soler L, et al.",
+          "year": 2010,
+          "url": "https://pubmed.ncbi.nlm.nih.gov/16335332/"
+        }
+      ],
+      "lastReviewedDate": "2024-01-15",
+      "reviewedBy": ["advisor_001", "advisor_003"]
+    },
+    {
+      "id": "cond_003_mild_anxiety",
+      "name": "Mild Anxiety",
+      "synonyms": ["Anxiety", "Nervousness", "Worry", "Anxious Feelings"],
+      "icdCodes": ["F41.1", "F41.9"],
+      "overview": "Mild anxiety involves feelings of worry, nervousness, or unease that are disproportionate to the actual threat or situation. While some anxiety is normal and adaptive, persistent or excessive anxiety can interfere with daily activities. Mild anxiety is distinguished from anxiety disorders by its lower intensity and lesser impact on functioning.",
+      "symptoms": [
+        "Restlessness or feeling on edge",
+        "Difficulty concentrating",
+        "Muscle tension",
+        "Sleep disturbance",
+        "Irritability",
+        "Mild worry or apprehension",
+        "Occasional rapid heartbeat",
+        "Butterflies in stomach"
+      ],
+      "redFlags": [
+        "Panic attacks with severe physical symptoms",
+        "Anxiety interfering significantly with work, school, or relationships",
+        "Avoidance of normal activities due to anxiety",
+        "Thoughts of self-harm",
+        "Severe physical symptoms (chest pain, difficulty breathing)",
+        "Symptoms of depression alongside anxiety",
+        "Substance use to manage anxiety"
+      ],
+      "recommendedPlants": [
+        {
+          "plantId": "plant_003_kava",
+          "usage": "Take 120-240mg of kavalactones daily for short-term relief of mild anxiety. Not recommended for long-term use due to potential liver concerns.",
+          "evidenceLevel": "human_trial"
+        }
+      ],
+      "evidenceLevel": "human_trial",
+      "references": [
+        {
+          "type": "review",
+          "id": "PMID:12810768",
+          "title": "Kava extract for treating anxiety",
+          "authors": "Pittler MH, Ernst E",
+          "year": 2003,
+          "url": "https://pubmed.ncbi.nlm.nih.gov/12810768/"
+        }
+      ],
+      "lastReviewedDate": "2024-01-15",
+      "reviewedBy": ["advisor_001", "advisor_004"]
+    }
+  ],
+  "plants": [
+    {
+      "id": "plant_001_echinacea",
+      "scientificName": "Echinacea purpurea",
+      "commonNames": ["Purple Coneflower", "Echinacea"],
+      "family": "Asteraceae",
+      "genus": "Echinacea",
+      "species": "purpurea",
+      "description": "Echinacea purpurea is a flowering plant native to North America, widely recognized for its immune-supporting properties. The plant features distinctive purple-pink petals surrounding a spiky central cone. Traditionally used by Native American tribes for various ailments, echinacea is now one of the most popular herbal supplements for immune health.",
+      "images": [
+        {
+          "url": "https://example.com/images/echinacea_whole_plant.jpg",
+          "altText": "Purple coneflower (Echinacea purpurea) in full bloom showing characteristic drooping purple petals",
+          "caption": "Echinacea purpurea in bloom",
+          "imageType": "whole_plant",
+          "thumbnailUrl": "https://example.com/images/thumbs/echinacea_whole_plant.jpg",
+          "license": "CC BY-SA 4.0"
+        },
+        {
+          "url": "https://example.com/images/echinacea_root.jpg",
+          "altText": "Dried echinacea root showing fibrous structure",
+          "caption": "Echinacea root - primary medicinal part",
+          "imageType": "root",
+          "thumbnailUrl": "https://example.com/images/thumbs/echinacea_root.jpg",
+          "license": "CC BY-SA 4.0"
+        }
+      ],
+      "phytochemicals": [
+        {
+          "name": "Echinacoside",
+          "chemicalClass": "Phenolic glycoside",
+          "pubchemId": "5281771",
+          "proposedMechanism": "Immune modulation, anti-inflammatory activity",
+          "concentration": "0.3-1.3% in root"
+        },
+        {
+          "name": "Cichoric acid",
+          "chemicalClass": "Phenolic acid",
+          "pubchemId": "5281764",
+          "proposedMechanism": "Antioxidant, antiviral, immune stimulation",
+          "concentration": "Up to 2% in aerial parts"
+        },
+        {
+          "name": "Alkamides",
+          "chemicalClass": "Alkylamides",
+          "proposedMechanism": "Immunomodulation via cannabinoid receptor interaction",
+          "concentration": "Variable, primarily in roots"
+        },
+        {
+          "name": "Polysaccharides",
+          "chemicalClass": "Complex carbohydrates",
+          "proposedMechanism": "Macrophage activation, immune system enhancement",
+          "concentration": "5-10%"
+        }
+      ],
+      "preparationMethods": [
+        {
+          "method": "tincture",
+          "instructions": "Use 1:5 ratio of dried root to 40% alcohol. Macerate for 2-4 weeks, shaking daily.",
+          "dosage": "2-4 ml (40-80 drops)",
+          "frequency": "3 times daily",
+          "duration": "At first sign of cold, continue for 7-10 days maximum",
+          "notes": "Most commonly used preparation. Take at onset of symptoms for best results."
+        },
+        {
+          "method": "tea",
+          "instructions": "Steep 1-2 grams of dried root or aerial parts in hot water for 10-15 minutes.",
+          "dosage": "1 cup",
+          "frequency": "3-4 times daily",
+          "duration": "7-10 days maximum",
+          "notes": "Less concentrated than tincture but still effective."
+        },
+        {
+          "method": "capsule",
+          "instructions": "Use standardized extract capsules.",
+          "dosage": "300-500mg",
+          "frequency": "3 times daily",
+          "duration": "7-10 days maximum",
+          "notes": "Ensure product is standardized to contain active compounds."
+        }
+      ],
+      "contraindications": [
+        {
+          "category": "autoimmune",
+          "severity": "moderate",
+          "description": "May stimulate immune system and potentially worsen autoimmune conditions such as multiple sclerosis, lupus, rheumatoid arthritis, or others.",
+          "references": [
+            {
+              "type": "pharmacopeia",
+              "title": "Echinacea - Autoimmune Disease Considerations",
+              "year": 2020
+            }
+          ]
+        },
+        {
+          "category": "pregnancy",
+          "severity": "mild",
+          "description": "Limited safety data during pregnancy. Some studies suggest safety, but consult healthcare provider.",
+          "references": []
+        },
+        {
+          "category": "children",
+          "severity": "mild",
+          "description": "Generally considered safe for children over 2 years. Not recommended for infants.",
+          "references": []
+        },
+        {
+          "category": "other",
+          "severity": "moderate",
+          "description": "Avoid in individuals allergic to plants in the Asteraceae family (ragweed, marigolds, daisies).",
+          "references": []
+        }
+      ],
+      "harvestingGuidance": {
+        "partUsed": ["root", "aerial parts", "flowers"],
+        "harvestSeason": "Roots: fall after 3-4 years growth. Aerial parts: during flowering (summer).",
+        "sustainabilityNotes": "Cultivate rather than wild-harvest. Plant is easy to grow and readily available. Wild populations should not be harvested.",
+        "cultivationDifficulty": "easy"
+      },
+      "evidenceLevel": "human_trial",
+      "references": [
+        {
+          "type": "review",
+          "id": "PMID:24554461",
+          "title": "Echinacea for preventing and treating the common cold",
+          "authors": "Karsch-Völk M, Barrett B, Kiefer D, et al.",
+          "year": 2014,
+          "url": "https://pubmed.ncbi.nlm.nih.gov/24554461/"
+        },
+        {
+          "type": "pubmed",
+          "id": "PMID:17313687",
+          "title": "Evaluation of echinacea for prevention and treatment of the common cold: a meta-analysis",
+          "authors": "Shah SA, Sander S, White CM, et al.",
+          "year": 2007,
+          "url": "https://pubmed.ncbi.nlm.nih.gov/17313687/"
+        }
+      ],
+      "lastReviewedDate": "2024-01-15",
+      "reviewedBy": ["advisor_001", "advisor_002"]
+    },
+    {
+      "id": "plant_002_valerian",
+      "scientificName": "Valeriana officinalis",
+      "commonNames": ["Valerian", "Garden Heliotrope", "All-Heal"],
+      "family": "Caprifoliaceae",
+      "genus": "Valeriana",
+      "species": "officinalis",
+      "description": "Valeriana officinalis is a perennial flowering plant native to Europe and Asia, now naturalized in North America. Known for its sedative and anxiolytic properties, valerian has been used for centuries to promote sleep and reduce anxiety. The root has a distinctive, pungent odor often described as earthy or musky. Despite the smell, it is one of the most well-researched herbal sleep aids.",
+      "images": [
+        {
+          "url": "https://example.com/images/valerian_flowers.jpg",
+          "altText": "Valerian plant with clusters of small pink-white flowers",
+          "caption": "Valeriana officinalis in bloom",
+          "imageType": "flower",
+          "thumbnailUrl": "https://example.com/images/thumbs/valerian_flowers.jpg",
+          "license": "CC BY-SA 4.0"
+        },
+        {
+          "url": "https://example.com/images/valerian_root.jpg",
+          "altText": "Fresh valerian root showing characteristic appearance",
+          "caption": "Valerian root - the primary medicinal part",
+          "imageType": "root",
+          "thumbnailUrl": "https://example.com/images/thumbs/valerian_root.jpg",
+          "license": "CC BY-SA 4.0"
+        }
+      ],
+      "phytochemicals": [
+        {
+          "name": "Valerenic acid",
+          "chemicalClass": "Sesquiterpenoid",
+          "pubchemId": "5281664",
+          "proposedMechanism": "GABA-A receptor modulation, increases GABA availability in synaptic cleft",
+          "concentration": "0.1-0.8% in root"
+        },
+        {
+          "name": "Valepotriates",
+          "chemicalClass": "Iridoid esters",
+          "proposedMechanism": "Sedative effects, though unstable and may degrade during processing",
+          "concentration": "Variable, 0.5-2%"
+        },
+        {
+          "name": "Isovaleric acid",
+          "chemicalClass": "Carboxylic acid",
+          "casNumber": "503-74-2",
+          "proposedMechanism": "Contributes to sedative effects; responsible for characteristic odor",
+          "concentration": "Trace amounts"
+        },
+        {
+          "name": "Lignans",
+          "chemicalClass": "Phenolic compounds",
+          "proposedMechanism": "Antioxidant activity",
+          "concentration": "Variable"
+        }
+      ],
+      "preparationMethods": [
+        {
+          "method": "extract",
+          "instructions": "Use standardized valerian root extract (0.3-0.8% valerenic acid).",
+          "dosage": "300-600mg",
+          "frequency": "Once daily, 30 minutes to 2 hours before bedtime",
+          "duration": "Can be used for several weeks; effectiveness may increase with continued use",
+          "notes": "Most common and well-studied preparation. Allow 2-4 weeks for full effects."
+        },
+        {
+          "method": "tea",
+          "instructions": "Steep 2-3 grams of dried valerian root in hot water for 10-15 minutes.",
+          "dosage": "1 cup",
+          "frequency": "1-2 times daily, with one dose before bedtime",
+          "duration": "Several weeks as needed",
+          "notes": "Has strong odor. May be combined with other relaxing herbs like lemon balm or chamomile."
+        },
+        {
+          "method": "tincture",
+          "instructions": "Use 1:5 ratio with 70% alcohol.",
+          "dosage": "4-6 ml",
+          "frequency": "Once before bedtime",
+          "duration": "Several weeks",
+          "notes": "Alcohol-based tinctures preserve valepotriates better than aqueous extracts."
+        }
+      ],
+      "contraindications": [
+        {
+          "category": "pregnancy",
+          "severity": "moderate",
+          "description": "Insufficient safety data during pregnancy. Avoid use during pregnancy and lactation.",
+          "references": []
+        },
+        {
+          "category": "children",
+          "severity": "moderate",
+          "description": "Not recommended for children under 3 years. Use with caution in older children.",
+          "references": []
+        },
+        {
+          "category": "liver_disease",
+          "severity": "moderate",
+          "description": "Rare reports of hepatotoxicity. Use with caution in individuals with liver disease.",
+          "references": [
+            {
+              "type": "pubmed",
+              "id": "PMID:16116559",
+              "title": "Valerian-associated hepatotoxicity",
+              "year": 2005
+            }
+          ]
+        },
+        {
+          "category": "surgery",
+          "severity": "moderate",
+          "description": "May potentiate sedative effects of anesthesia. Discontinue at least 2 weeks before surgery.",
+          "references": []
+        },
+        {
+          "category": "other",
+          "severity": "mild",
+          "description": "May cause drowsiness. Do not operate heavy machinery or drive until you know how it affects you. Avoid combining with alcohol or other sedatives.",
+          "references": []
+        }
+      ],
+      "harvestingGuidance": {
+        "partUsed": ["root"],
+        "harvestSeason": "Fall of second year, after aerial parts have died back",
+        "sustainabilityNotes": "Easily cultivated. Prefers moist, rich soil. Wild harvest should be sustainable and from abundant populations only.",
+        "cultivationDifficulty": "easy"
+      },
+      "evidenceLevel": "human_trial",
+      "references": [
+        {
+          "type": "review",
+          "id": "PMID:16335332",
+          "title": "Valerian for sleep: a systematic review and meta-analysis",
+          "authors": "Fernández-San-Martín MI, Masa-Font R, Palacios-Soler L, et al.",
+          "year": 2010,
+          "url": "https://pubmed.ncbi.nlm.nih.gov/16335332/"
+        },
+        {
+          "type": "pubmed",
+          "id": "PMID:10815010",
+          "title": "Valerian extract and valerenic acid are partial agonists of the 5-HT5a receptor in vitro",
+          "authors": "Dietz BM, Mahady GB, Pauli GF, et al.",
+          "year": 2005
+        }
+      ],
+      "lastReviewedDate": "2024-01-15",
+      "reviewedBy": ["advisor_001", "advisor_003"]
+    },
+    {
+      "id": "plant_003_kava",
+      "scientificName": "Piper methysticum",
+      "commonNames": ["Kava", "Kava Kava", "Awa", "Yaqona"],
+      "family": "Piperaceae",
+      "genus": "Piper",
+      "species": "methysticum",
+      "description": "Piper methysticum is a plant native to the South Pacific islands, where it has been used ceremonially and medicinally for over 3,000 years. The root contains kavalactones, compounds with anxiolytic and muscle-relaxant properties. Kava has gained popularity in Western countries as a natural remedy for anxiety, though concerns about potential liver toxicity have led to restrictions in some countries.",
+      "images": [
+        {
+          "url": "https://example.com/images/kava_plant.jpg",
+          "altText": "Kava plant showing heart-shaped leaves in tropical setting",
+          "caption": "Piper methysticum growing in natural habitat",
+          "imageType": "whole_plant",
+          "thumbnailUrl": "https://example.com/images/thumbs/kava_plant.jpg",
+          "license": "CC BY-SA 4.0"
+        },
+        {
+          "url": "https://example.com/images/kava_root.jpg",
+          "altText": "Kava root showing woody, fibrous structure",
+          "caption": "Kava root - contains anxiolytic kavalactones",
+          "imageType": "root",
+          "thumbnailUrl": "https://example.com/images/thumbs/kava_root.jpg",
+          "license": "CC BY-SA 4.0"
+        }
+      ],
+      "phytochemicals": [
+        {
+          "name": "Kavain",
+          "chemicalClass": "Kavalactone",
+          "pubchemId": "3503",
+          "proposedMechanism": "GABA-A receptor modulation, voltage-gated sodium channel blockade",
+          "concentration": "Variable, total kavalactones 3-20%"
+        },
+        {
+          "name": "Dihydrokavain",
+          "chemicalClass": "Kavalactone",
+          "pubchemId": "5281557",
+          "proposedMechanism": "Anxiolytic effects, muscle relaxation",
+          "concentration": "Part of total kavalactone content"
+        },
+        {
+          "name": "Methysticin",
+          "chemicalClass": "Kavalactone",
+          "pubchemId": "5281569",
+          "proposedMechanism": "GABA receptor interaction, neuroprotective effects",
+          "concentration": "Part of total kavalactone content"
+        },
+        {
+          "name": "Yangonin",
+          "chemicalClass": "Kavalactone",
+          "pubchemId": "5281602",
+          "proposedMechanism": "Cannabinoid receptor interaction, anxiolytic activity",
+          "concentration": "Part of total kavalactone content"
+        }
+      ],
+      "preparationMethods": [
+        {
+          "method": "extract",
+          "instructions": "Use standardized extract containing 70% kavalactones.",
+          "dosage": "120-240mg kavalactones",
+          "frequency": "1-3 times daily",
+          "duration": "Short-term use only (up to 4-8 weeks) due to liver safety concerns",
+          "notes": "Water-based or aqueous-ethanol extracts preferred. Avoid acetone or ethanol-only extracts."
+        },
+        {
+          "method": "tea",
+          "instructions": "Traditional preparation: pound or grind root, mix with cold water, strain through cloth.",
+          "dosage": "2-4 grams of root powder",
+          "frequency": "1-2 times daily",
+          "duration": "Short-term use",
+          "notes": "Traditional aqueous preparation may have better safety profile than alcoholic extracts."
+        }
+      ],
+      "contraindications": [
+        {
+          "category": "liver_disease",
+          "severity": "contraindicated",
+          "description": "Contraindicated in individuals with liver disease or history of liver problems. Rare but serious cases of hepatotoxicity reported.",
+          "references": [
+            {
+              "type": "pubmed",
+              "id": "PMID:12810768",
+              "title": "Kava and the risk of hepatotoxicity",
+              "year": 2007
+            }
+          ]
+        },
+        {
+          "category": "pregnancy",
+          "severity": "contraindicated",
+          "description": "Not recommended during pregnancy or lactation due to insufficient safety data.",
+          "references": []
+        },
+        {
+          "category": "children",
+          "severity": "contraindicated",
+          "description": "Not recommended for children under 18.",
+          "references": []
+        },
+        {
+          "category": "cyp_interaction",
+          "severity": "major",
+          "description": "May inhibit CYP450 enzymes, particularly CYP2D6 and CYP3A4. Can interact with many medications.",
+          "references": [
+            {
+              "type": "pubmed",
+              "title": "Kava and CYP450 enzyme interactions",
+              "year": 2008
+            }
+          ]
+        },
+        {
+          "category": "surgery",
+          "severity": "major",
+          "description": "Discontinue at least 2 weeks before surgery due to potential interaction with anesthesia.",
+          "references": []
+        },
+        {
+          "category": "other",
+          "severity": "moderate",
+          "description": "May cause drowsiness. Do not combine with alcohol, benzodiazepines, or other CNS depressants. Monitor liver function if using regularly. Avoid driving or operating machinery.",
+          "references": []
+        }
+      ],
+      "harvestingGuidance": {
+        "partUsed": ["root"],
+        "harvestSeason": "Roots harvested after 3-5 years of growth",
+        "sustainabilityNotes": "Cultivated commercially in Pacific islands. Wild harvest threatens natural populations. Purchase only from ethical, sustainable sources. Plant is difficult to cultivate outside tropical regions.",
+        "cultivationDifficulty": "difficult"
+      },
+      "evidenceLevel": "human_trial",
+      "references": [
+        {
+          "type": "review",
+          "id": "PMID:12810768",
+          "title": "Kava extract for treating anxiety",
+          "authors": "Pittler MH, Ernst E",
+          "year": 2003,
+          "url": "https://pubmed.ncbi.nlm.nih.gov/12810768/"
+        },
+        {
+          "type": "pubmed",
+          "id": "PMID:23169470",
+          "title": "Kava for the treatment of generalized anxiety disorder (K-GAD): study protocol for a randomized controlled trial",
+          "authors": "Sarris J, Stough C, Teschke R, et al.",
+          "year": 2013,
+          "url": "https://pubmed.ncbi.nlm.nih.gov/23169470/"
+        }
+      ],
+      "lastReviewedDate": "2024-01-15",
+      "reviewedBy": ["advisor_001", "advisor_004"]
+    }
+  ]
+}

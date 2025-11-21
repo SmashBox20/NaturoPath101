@@ -1,0 +1,529 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NaturoPath:101 Data Schema",
+  "version": "1.0.0",
+  "definitions": {
+    "Condition": {
+      "type": "object",
+      "required": ["id", "name", "category", "description", "severity"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the condition"
+        },
+        "name": {
+          "type": "string",
+          "description": "Common name of the condition"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "Digestive",
+            "Respiratory",
+            "Musculoskeletal",
+            "Cardiovascular",
+            "Nervous System",
+            "Immune System",
+            "Skin",
+            "Mental Health",
+            "Metabolic",
+            "Reproductive",
+            "Urinary",
+            "Endocrine"
+          ],
+          "description": "Primary system affected"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the condition"
+        },
+        "symptoms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Common symptoms associated with the condition"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["Mild", "Moderate", "Severe", "Variable"],
+          "description": "General severity classification"
+        },
+        "conventionalTreatments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Standard medical treatments"
+        },
+        "naturalRemedies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RemedyReference"
+          },
+          "description": "Natural remedies that may help"
+        },
+        "lifestyleModifications": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Lifestyle changes that may help"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Safety warnings and when to seek medical care"
+        },
+        "scientificReferences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ScientificReference"
+          },
+          "description": "Peer-reviewed research citations"
+        },
+        "relatedConditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "IDs of related conditions"
+        },
+        "prevalence": {
+          "type": "string",
+          "description": "How common the condition is"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Search and filtering tags"
+        }
+      }
+    },
+    "MedicinalPlant": {
+      "type": "object",
+      "required": ["id", "commonName", "scientificName", "family", "safetyRating"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the plant"
+        },
+        "commonName": {
+          "type": "string",
+          "description": "Common name(s) of the plant"
+        },
+        "alternateNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Other common names"
+        },
+        "scientificName": {
+          "type": "string",
+          "description": "Botanical/scientific name"
+        },
+        "family": {
+          "type": "string",
+          "description": "Plant family"
+        },
+        "nativeRegions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Geographic regions where plant is native"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the plant"
+        },
+        "partsUsed": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["Root", "Leaf", "Flower", "Bark", "Seed", "Fruit", "Whole Plant", "Resin", "Essential Oil"]
+          },
+          "description": "Which parts are used medicinally"
+        },
+        "activeCompounds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Key active chemical compounds"
+        },
+        "traditionalUses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Historical and traditional medicinal uses"
+        },
+        "modernUses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Contemporary validated uses"
+        },
+        "preparations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Preparation"
+          },
+          "description": "How to prepare the plant for use"
+        },
+        "dosage": {
+          "type": "object",
+          "properties": {
+            "standardDose": {
+              "type": "string"
+            },
+            "maximumDailyDose": {
+              "type": "string"
+            },
+            "notes": {
+              "type": "string"
+            }
+          },
+          "description": "Dosage guidelines"
+        },
+        "safetyRating": {
+          "type": "string",
+          "enum": ["Generally Safe", "Use with Caution", "Requires Medical Supervision", "Not Recommended"],
+          "description": "Overall safety classification"
+        },
+        "contraindications": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Situations where use should be avoided"
+        },
+        "drugInteractions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "drug": {
+                "type": "string"
+              },
+              "interaction": {
+                "type": "string"
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["Mild", "Moderate", "Severe"]
+              }
+            }
+          },
+          "description": "Known drug interactions"
+        },
+        "sideEffects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Possible side effects"
+        },
+        "pregnancy": {
+          "type": "string",
+          "enum": ["Safe", "Use with Caution", "Avoid", "Unknown"],
+          "description": "Safety during pregnancy"
+        },
+        "breastfeeding": {
+          "type": "string",
+          "enum": ["Safe", "Use with Caution", "Avoid", "Unknown"],
+          "description": "Safety during breastfeeding"
+        },
+        "scientificEvidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ScientificReference"
+          },
+          "description": "Research supporting uses"
+        },
+        "conditionsAddressed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "IDs of conditions this plant may help with"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "caption": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["Whole Plant", "Leaf", "Flower", "Root", "Prepared Form"]
+              }
+            }
+          },
+          "description": "Images for identification"
+        },
+        "sustainability": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["Abundant", "Cultivated", "At Risk", "Endangered"]
+            },
+            "notes": {
+              "type": "string"
+            }
+          },
+          "description": "Conservation status and sustainability information"
+        }
+      }
+    },
+    "Preparation": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["Tea/Infusion", "Decoction", "Tincture", "Capsule", "Poultice", "Compress", "Essential Oil", "Salve/Ointment"]
+        },
+        "instructions": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "RemedyReference": {
+      "type": "object",
+      "properties": {
+        "plantId": {
+          "type": "string",
+          "description": "ID of the medicinal plant"
+        },
+        "efficacy": {
+          "type": "string",
+          "enum": ["Strong Evidence", "Moderate Evidence", "Limited Evidence", "Traditional Use Only"],
+          "description": "Level of scientific support"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Specific notes about use for this condition"
+        }
+      }
+    },
+    "ScientificReference": {
+      "type": "object",
+      "required": ["title", "authors", "year"],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "year": {
+          "type": "integer"
+        },
+        "journal": {
+          "type": "string"
+        },
+        "doi": {
+          "type": "string"
+        },
+        "pmid": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        }
+      }
+    },
+    "UserMedicineCabinet": {
+      "type": "object",
+      "required": ["userId", "items"],
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MedicineCabinetItem"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "MedicineCabinetItem": {
+      "type": "object",
+      "required": ["plantId", "form", "addedDate"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "plantId": {
+          "type": "string"
+        },
+        "form": {
+          "type": "string",
+          "enum": ["Tea", "Tincture", "Capsule", "Essential Oil", "Raw Herb", "Powder", "Other"]
+        },
+        "brand": {
+          "type": "string"
+        },
+        "dosage": {
+          "type": "string"
+        },
+        "frequency": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "addedDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "effectivenessRating": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "usageLogs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "amount": {
+                "type": "string"
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "required": ["id", "email"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "profile": {
+          "type": "object",
+          "properties": {
+            "displayName": {
+              "type": "string"
+            },
+            "age": {
+              "type": "integer"
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Condition IDs user is interested in"
+            },
+            "preferences": {
+              "type": "object",
+              "properties": {
+                "notifications": {
+                  "type": "boolean"
+                },
+                "newsletter": {
+                  "type": "boolean"
+                },
+                "dataSharing": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "subscription": {
+          "type": "object",
+          "properties": {
+            "tier": {
+              "type": "string",
+              "enum": ["Free", "Premium", "Professional"]
+            },
+            "status": {
+              "type": "string",
+              "enum": ["Active", "Cancelled", "Expired", "Trial"]
+            },
+            "startDate": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "endDate": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastLogin": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

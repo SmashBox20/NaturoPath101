@@ -1,0 +1,102 @@
+ID,Condition Name,Category,Severity,Prevalence
+cond-001,Common Cold,Respiratory,Mild,Very High
+cond-002,Insomnia,Nervous System,Variable,High
+cond-003,Indigestion (Dyspepsia),Digestive,Mild,High
+cond-004,Anxiety,Mental Health,Variable,Very High
+cond-005,Headache (Tension),Nervous System,Mild,Very High
+cond-006,Seasonal Allergies,Immune System,Mild,High
+cond-007,Acne,Skin,Mild,High
+cond-008,Lower Back Pain,Musculoskeletal,Variable,Very High
+cond-009,Constipation,Digestive,Mild,High
+cond-010,Eczema,Skin,Variable,Moderate
+cond-011,Acid Reflux (GERD),Digestive,Moderate,High
+cond-012,Migraine,Nervous System,Severe,Moderate
+cond-013,Depression,Mental Health,Variable,High
+cond-014,High Blood Pressure,Cardiovascular,Moderate,Very High
+cond-015,Type 2 Diabetes,Metabolic,Severe,High
+cond-016,Arthritis (Osteoarthritis),Musculoskeletal,Variable,High
+cond-017,Asthma,Respiratory,Variable,High
+cond-018,Irritable Bowel Syndrome,Digestive,Variable,Moderate
+cond-019,Psoriasis,Skin,Variable,Moderate
+cond-020,Chronic Fatigue,Metabolic,Variable,Moderate
+cond-021,Fibromyalgia,Musculoskeletal,Severe,Moderate
+cond-022,Sinusitis,Respiratory,Moderate,High
+cond-023,Urinary Tract Infection,Urinary,Moderate,High
+cond-024,Yeast Infection,Reproductive,Mild,High
+cond-025,Premenstrual Syndrome (PMS),Reproductive,Variable,High
+cond-026,Menopause Symptoms,Reproductive,Variable,High
+cond-027,Benign Prostatic Hyperplasia,Urinary,Moderate,High
+cond-028,Hay Fever,Immune System,Mild,High
+cond-029,Bronchitis,Respiratory,Moderate,High
+cond-030,Influenza,Respiratory,Moderate,High
+cond-031,Sore Throat,Respiratory,Mild,Very High
+cond-032,Cough,Respiratory,Mild,Very High
+cond-033,Nausea,Digestive,Mild,High
+cond-034,Diarrhea,Digestive,Mild,High
+cond-035,Bloating,Digestive,Mild,Very High
+cond-036,Gas,Digestive,Mild,Very High
+cond-037,Motion Sickness,Nervous System,Mild,Moderate
+cond-038,Vertigo,Nervous System,Moderate,Moderate
+cond-039,Tinnitus,Nervous System,Variable,Moderate
+cond-040,Dry Eyes,Nervous System,Mild,Moderate
+cond-041,Eye Strain,Nervous System,Mild,High
+cond-042,Mild Burns,Skin,Mild,High
+cond-043,Minor Wounds,Skin,Mild,Very High
+cond-044,Bruises,Musculoskeletal,Mild,Very High
+cond-045,Sprains,Musculoskeletal,Moderate,High
+cond-046,Muscle Soreness,Musculoskeletal,Mild,Very High
+cond-047,Cramps (Muscle),Musculoskeletal,Mild,High
+cond-048,Dandruff,Skin,Mild,High
+cond-049,Hair Loss,Skin,Variable,Moderate
+cond-050,Dry Skin,Skin,Mild,Very High
+cond-051,Oily Skin,Skin,Mild,High
+cond-052,Rosacea,Skin,Variable,Moderate
+cond-053,Age Spots,Skin,Mild,Moderate
+cond-054,Wrinkles,Skin,Mild,High
+cond-055,Cold Sores,Skin,Mild,Moderate
+cond-056,Canker Sores,Digestive,Mild,Moderate
+cond-057,Bad Breath (Halitosis),Digestive,Mild,High
+cond-058,Gum Disease (Gingivitis),Digestive,Moderate,High
+cond-059,Tooth Sensitivity,Nervous System,Mild,Moderate
+cond-060,Varicose Veins,Cardiovascular,Moderate,Moderate
+cond-061,Hemorrhoids,Digestive,Moderate,High
+cond-062,Poor Circulation,Cardiovascular,Variable,Moderate
+cond-063,High Cholesterol,Cardiovascular,Moderate,Very High
+cond-064,Atherosclerosis,Cardiovascular,Severe,Moderate
+cond-065,Anemia,Cardiovascular,Variable,Moderate
+cond-066,Hypothyroidism,Endocrine,Moderate,Moderate
+cond-067,Hyperthyroidism,Endocrine,Moderate,Low
+cond-068,Adrenal Fatigue,Endocrine,Variable,Moderate
+cond-069,Stress,Mental Health,Variable,Very High
+cond-070,Brain Fog,Nervous System,Mild,Moderate
+cond-071,Memory Issues,Nervous System,Variable,Moderate
+cond-072,ADHD,Nervous System,Variable,Moderate
+cond-073,Restless Leg Syndrome,Nervous System,Variable,Moderate
+cond-074,Neuropathy,Nervous System,Variable,Moderate
+cond-075,Carpal Tunnel Syndrome,Musculoskeletal,Variable,Moderate
+cond-076,Tennis Elbow,Musculoskeletal,Moderate,Moderate
+cond-077,Plantar Fasciitis,Musculoskeletal,Moderate,Moderate
+cond-078,Sciatica,Musculoskeletal,Severe,Moderate
+cond-079,Neck Pain,Musculoskeletal,Variable,High
+cond-080,Shoulder Pain,Musculoskeletal,Variable,Moderate
+cond-081,Knee Pain,Musculoskeletal,Variable,High
+cond-082,Gout,Musculoskeletal,Severe,Moderate
+cond-083,Bursitis,Musculoskeletal,Moderate,Moderate
+cond-084,Tendonitis,Musculoskeletal,Moderate,Moderate
+cond-085,Osteoporosis,Musculoskeletal,Severe,Moderate
+cond-086,Interstitial Cystitis,Urinary,Severe,Low
+cond-087,Kidney Stones,Urinary,Severe,Moderate
+cond-088,Frequent Urination,Urinary,Mild,Moderate
+cond-089,Endometriosis,Reproductive,Severe,Moderate
+cond-090,Polycystic Ovary Syndrome,Reproductive,Variable,Moderate
+cond-091,Erectile Dysfunction,Reproductive,Variable,Moderate
+cond-092,Low Libido,Reproductive,Variable,Moderate
+cond-093,Autoimmune Disease Support,Immune System,Severe,Moderate
+cond-094,Weakened Immunity,Immune System,Variable,High
+cond-095,Chronic Inflammation,Immune System,Variable,High
+cond-096,Candida Overgrowth,Digestive,Variable,Moderate
+cond-097,Food Sensitivities,Digestive,Variable,Moderate
+cond-098,Leaky Gut Syndrome,Digestive,Variable,Low
+cond-099,Liver Support (General),Digestive,Variable,Moderate
+cond-100,Detoxification Support,Metabolic,Variable,Moderate
+cond-101,Weight Management,Metabolic,Variable,Very High

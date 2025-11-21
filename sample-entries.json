@@ -1,0 +1,490 @@
+{
+  "conditions": [
+    {
+      "id": "cond-001",
+      "name": "Common Cold",
+      "category": "Respiratory",
+      "description": "A viral infection of the upper respiratory tract, primarily affecting the nose and throat. Usually mild and self-limiting, lasting 7-10 days.",
+      "symptoms": [
+        "Runny or stuffy nose",
+        "Sore throat",
+        "Cough",
+        "Sneezing",
+        "Mild headache",
+        "Low-grade fever",
+        "Fatigue"
+      ],
+      "severity": "Mild",
+      "conventionalTreatments": [
+        "Rest and hydration",
+        "Over-the-counter pain relievers (acetaminophen, ibuprofen)",
+        "Decongestants",
+        "Cough suppressants"
+      ],
+      "naturalRemedies": [
+        {
+          "plantId": "plant-001",
+          "efficacy": "Moderate Evidence",
+          "notes": "May reduce duration and severity of symptoms"
+        },
+        {
+          "plantId": "plant-005",
+          "efficacy": "Strong Evidence",
+          "notes": "Antiviral properties, especially when taken at first signs"
+        },
+        {
+          "plantId": "plant-008",
+          "efficacy": "Moderate Evidence",
+          "notes": "Soothes throat and has antimicrobial properties"
+        }
+      ],
+      "lifestyleModifications": [
+        "Adequate rest and sleep",
+        "Increased fluid intake",
+        "Humidify air",
+        "Gargle with salt water",
+        "Avoid smoking and secondhand smoke"
+      ],
+      "warnings": [
+        "Seek medical attention if fever exceeds 101.3°F (38.5°C) for more than 3 days",
+        "Consult doctor if symptoms worsen or don't improve after 10 days",
+        "Seek immediate care for difficulty breathing or severe chest pain"
+      ],
+      "prevalence": "Extremely common; adults average 2-3 colds per year",
+      "tags": ["respiratory", "viral", "seasonal", "upper respiratory"]
+    },
+    {
+      "id": "cond-002",
+      "name": "Insomnia",
+      "category": "Nervous System",
+      "description": "A sleep disorder characterized by difficulty falling asleep, staying asleep, or experiencing non-restorative sleep despite adequate opportunity for sleep.",
+      "symptoms": [
+        "Difficulty falling asleep",
+        "Waking up frequently during the night",
+        "Waking too early",
+        "Daytime fatigue",
+        "Irritability",
+        "Difficulty concentrating",
+        "Tension headaches"
+      ],
+      "severity": "Variable",
+      "conventionalTreatments": [
+        "Cognitive behavioral therapy for insomnia (CBT-I)",
+        "Sleep hygiene improvements",
+        "Prescription sleep medications",
+        "Melatonin supplements"
+      ],
+      "naturalRemedies": [
+        {
+          "plantId": "plant-002",
+          "efficacy": "Strong Evidence",
+          "notes": "Reduces sleep latency and improves sleep quality"
+        },
+        {
+          "plantId": "plant-003",
+          "efficacy": "Moderate Evidence",
+          "notes": "Calming effect, particularly when combined with other herbs"
+        },
+        {
+          "plantId": "plant-006",
+          "efficacy": "Moderate Evidence",
+          "notes": "Gentle sedative, safe for long-term use"
+        }
+      ],
+      "lifestyleModifications": [
+        "Maintain consistent sleep schedule",
+        "Create dark, quiet, cool sleep environment",
+        "Limit screen time before bed",
+        "Avoid caffeine after 2 PM",
+        "Regular exercise (but not close to bedtime)",
+        "Relaxation techniques (meditation, deep breathing)"
+      ],
+      "warnings": [
+        "Consult healthcare provider if insomnia persists for more than a month",
+        "May be a symptom of underlying medical or mental health conditions",
+        "Avoid driving or operating machinery if severely sleep-deprived"
+      ],
+      "prevalence": "Affects 10-30% of adults; more common in women and older adults",
+      "tags": ["sleep", "mental health", "nervous system", "chronic"]
+    },
+    {
+      "id": "cond-003",
+      "name": "Indigestion (Dyspepsia)",
+      "category": "Digestive",
+      "description": "Discomfort or pain in the upper abdomen, often occurring during or after eating. May include feelings of fullness, bloating, or nausea.",
+      "symptoms": [
+        "Upper abdominal pain or discomfort",
+        "Feeling uncomfortably full after eating",
+        "Bloating",
+        "Nausea",
+        "Belching",
+        "Heartburn"
+      ],
+      "severity": "Mild",
+      "conventionalTreatments": [
+        "Antacids",
+        "H2 blockers",
+        "Proton pump inhibitors",
+        "Lifestyle and dietary modifications"
+      ],
+      "naturalRemedies": [
+        {
+          "plantId": "plant-004",
+          "efficacy": "Strong Evidence",
+          "notes": "Effective for nausea and digestive discomfort"
+        },
+        {
+          "plantId": "plant-007",
+          "efficacy": "Moderate Evidence",
+          "notes": "Relaxes digestive tract muscles, reduces gas"
+        },
+        {
+          "plantId": "plant-009",
+          "efficacy": "Moderate Evidence",
+          "notes": "Soothes digestive tract, anti-inflammatory"
+        }
+      ],
+      "lifestyleModifications": [
+        "Eat smaller, more frequent meals",
+        "Avoid trigger foods (spicy, fatty, acidic)",
+        "Don't lie down immediately after eating",
+        "Manage stress levels",
+        "Maintain healthy weight",
+        "Chew food thoroughly"
+      ],
+      "warnings": [
+        "Seek medical attention for severe or persistent pain",
+        "Consult doctor if experiencing unexplained weight loss",
+        "Get immediate care for chest pain, shortness of breath, or vomiting blood"
+      ],
+      "prevalence": "Affects approximately 25% of the population annually",
+      "tags": ["digestive", "gastrointestinal", "dietary", "lifestyle"]
+    }
+  ],
+  "medicinalPlants": [
+    {
+      "id": "plant-001",
+      "commonName": "Echinacea",
+      "alternateNames": ["Purple Coneflower", "American Coneflower"],
+      "scientificName": "Echinacea purpurea",
+      "family": "Asteraceae",
+      "nativeRegions": ["North America", "Central United States"],
+      "description": "A flowering plant native to North America, recognized by its distinctive purple-pink petals and spiky center cone. Used traditionally by Native Americans for various ailments.",
+      "partsUsed": ["Root", "Flower", "Leaf"],
+      "activeCompounds": [
+        {
+          "name": "Alkamides",
+          "description": "Compounds with immunomodulatory effects"
+        },
+        {
+          "name": "Polysaccharides",
+          "description": "Complex carbohydrates that may stimulate immune function"
+        },
+        {
+          "name": "Caffeic acid derivatives",
+          "description": "Antioxidant compounds"
+        }
+      ],
+      "traditionalUses": [
+        "Wound healing",
+        "Snake bites",
+        "Infections",
+        "Toothaches"
+      ],
+      "modernUses": [
+        "Common cold prevention and treatment",
+        "Upper respiratory infections",
+        "Immune system support"
+      ],
+      "preparations": [
+        {
+          "method": "Tea/Infusion",
+          "instructions": "Steep 1-2 teaspoons dried herb in hot water for 10-15 minutes",
+          "duration": "Drink 3 times daily at first sign of cold"
+        },
+        {
+          "method": "Tincture",
+          "instructions": "Take 2-3 ml of tincture",
+          "duration": "3 times daily for up to 10 days"
+        }
+      ],
+      "dosage": {
+        "standardDose": "300-500 mg dried herb extract, 3 times daily",
+        "maximumDailyDose": "Up to 1500 mg daily",
+        "notes": "Most effective when taken at first sign of symptoms; not recommended for continuous use beyond 8 weeks"
+      },
+      "safetyRating": "Generally Safe",
+      "contraindications": [
+        "Autoimmune disorders (lupus, MS, rheumatoid arthritis)",
+        "Allergies to plants in Asteraceae family",
+        "Progressive systemic diseases (tuberculosis, HIV/AIDS)"
+      ],
+      "drugInteractions": [
+        {
+          "drug": "Immunosuppressants",
+          "interaction": "May counteract effects of immunosuppressive medications",
+          "severity": "Moderate"
+        },
+        {
+          "drug": "Caffeine",
+          "interaction": "May increase caffeine levels and side effects",
+          "severity": "Mild"
+        }
+      ],
+      "sideEffects": [
+        "Mild gastrointestinal upset",
+        "Allergic reactions (rash, in susceptible individuals)",
+        "Dizziness (rare)"
+      ],
+      "pregnancy": "Use with Caution",
+      "breastfeeding": "Use with Caution",
+      "conditionsAddressed": ["cond-001"],
+      "sustainability": {
+        "status": "Cultivated",
+        "notes": "Widely cultivated; wild populations stable but prefer cultivated sources"
+      }
+    },
+    {
+      "id": "plant-002",
+      "commonName": "Valerian",
+      "alternateNames": ["Garden Heliotrope", "All-Heal"],
+      "scientificName": "Valeriana officinalis",
+      "family": "Caprifoliaceae",
+      "nativeRegions": ["Europe", "Asia"],
+      "description": "A perennial flowering plant with sweet-smelling pink or white flowers but a distinctively pungent-smelling root, which is the part used medicinally.",
+      "partsUsed": ["Root"],
+      "activeCompounds": [
+        {
+          "name": "Valerenic acid",
+          "description": "Thought to inhibit breakdown of GABA in the brain"
+        },
+        {
+          "name": "Valepotriates",
+          "description": "Compounds with sedative properties"
+        }
+      ],
+      "traditionalUses": [
+        "Nervousness and anxiety",
+        "Sleep disorders",
+        "Hysteria",
+        "Epilepsy"
+      ],
+      "modernUses": [
+        "Insomnia",
+        "Anxiety",
+        "Restlessness",
+        "Stress management"
+      ],
+      "preparations": [
+        {
+          "method": "Tea/Infusion",
+          "instructions": "Steep 2-3 grams of dried root in hot water for 10-15 minutes",
+          "duration": "Drink 30-60 minutes before bedtime"
+        },
+        {
+          "method": "Capsule",
+          "instructions": "Take 400-900 mg of extract",
+          "duration": "30 minutes to 2 hours before bedtime"
+        }
+      ],
+      "dosage": {
+        "standardDose": "400-900 mg extract taken 30 minutes to 2 hours before bedtime",
+        "maximumDailyDose": "Up to 1800 mg",
+        "notes": "Effects may take 2-4 weeks of regular use to become apparent"
+      },
+      "safetyRating": "Generally Safe",
+      "contraindications": [
+        "Liver disease",
+        "Surgery (discontinue 2 weeks prior)"
+      ],
+      "drugInteractions": [
+        {
+          "drug": "Sedatives and CNS depressants",
+          "interaction": "May enhance sedative effects",
+          "severity": "Moderate"
+        },
+        {
+          "drug": "Alcohol",
+          "interaction": "Increased sedation",
+          "severity": "Moderate"
+        }
+      ],
+      "sideEffects": [
+        "Headache",
+        "Dizziness",
+        "Upset stomach",
+        "Morning grogginess (if taken late at night)"
+      ],
+      "pregnancy": "Avoid",
+      "breastfeeding": "Avoid",
+      "conditionsAddressed": ["cond-002"],
+      "sustainability": {
+        "status": "Cultivated",
+        "notes": "Commonly cultivated in Europe and North America"
+      }
+    },
+    {
+      "id": "plant-003",
+      "commonName": "Chamomile",
+      "alternateNames": ["German Chamomile", "Wild Chamomile"],
+      "scientificName": "Matricaria chamomilla",
+      "family": "Asteraceae",
+      "nativeRegions": ["Europe", "Western Asia"],
+      "description": "A delicate annual plant with white daisy-like flowers and a sweet, apple-like scent. One of the most widely used medicinal herbs.",
+      "partsUsed": ["Flower"],
+      "activeCompounds": [
+        {
+          "name": "Apigenin",
+          "description": "Flavonoid with anti-anxiety and sedative properties"
+        },
+        {
+          "name": "Bisabolol",
+          "description": "Anti-inflammatory and antimicrobial compound"
+        },
+        {
+          "name": "Chamazulene",
+          "description": "Anti-inflammatory compound formed during steam distillation"
+        }
+      ],
+      "traditionalUses": [
+        "Sleep aid",
+        "Digestive upset",
+        "Wound healing",
+        "Menstrual cramps",
+        "Inflammation"
+      ],
+      "modernUses": [
+        "Mild insomnia",
+        "Anxiety and stress",
+        "Indigestion",
+        "Skin irritation",
+        "Mouth sores"
+      ],
+      "preparations": [
+        {
+          "method": "Tea/Infusion",
+          "instructions": "Steep 1 tablespoon dried flowers in hot water for 5-10 minutes, covered",
+          "duration": "Drink 1-4 cups daily"
+        },
+        {
+          "method": "Essential Oil",
+          "instructions": "Dilute and apply topically or use in aromatherapy",
+          "duration": "As needed"
+        }
+      ],
+      "dosage": {
+        "standardDose": "1-4 cups of tea daily, or 400-1600 mg extract",
+        "maximumDailyDose": "Not established; generally considered safe in typical amounts",
+        "notes": "Cover tea while steeping to preserve volatile oils"
+      },
+      "safetyRating": "Generally Safe",
+      "contraindications": [
+        "Allergy to plants in Asteraceae family",
+        "Hormone-sensitive conditions (use with caution)"
+      ],
+      "drugInteractions": [
+        {
+          "drug": "Sedatives",
+          "interaction": "May enhance sedative effects",
+          "severity": "Mild"
+        },
+        {
+          "drug": "Blood thinners (warfarin)",
+          "interaction": "May increase bleeding risk",
+          "severity": "Moderate"
+        }
+      ],
+      "sideEffects": [
+        "Allergic reactions (in those allergic to ragweed, chrysanthemums, or marigolds)",
+        "Drowsiness",
+        "Vomiting (in large doses)"
+      ],
+      "pregnancy": "Use with Caution",
+      "breastfeeding": "Generally Safe",
+      "conditionsAddressed": ["cond-002", "cond-003"],
+      "sustainability": {
+        "status": "Cultivated",
+        "notes": "Widely cultivated; abundant supply"
+      }
+    },
+    {
+      "id": "plant-004",
+      "commonName": "Ginger",
+      "alternateNames": ["Ginger Root"],
+      "scientificName": "Zingiber officinale",
+      "family": "Zingiberaceae",
+      "nativeRegions": ["Southeast Asia"],
+      "description": "A flowering plant whose rhizome (underground stem) is widely used as a spice and folk medicine. Has a warm, spicy flavor and aroma.",
+      "partsUsed": ["Root"],
+      "activeCompounds": [
+        {
+          "name": "Gingerols",
+          "description": "Primary bioactive compounds with anti-inflammatory and antioxidant effects"
+        },
+        {
+          "name": "Shogaols",
+          "description": "Formed when ginger is dried; more potent than gingerols"
+        }
+      ],
+      "traditionalUses": [
+        "Nausea and vomiting",
+        "Digestive disorders",
+        "Arthritis",
+        "Colds and flu",
+        "Motion sickness"
+      ],
+      "modernUses": [
+        "Nausea (including morning sickness and chemotherapy-induced)",
+        "Indigestion",
+        "Osteoarthritis pain",
+        "Menstrual pain"
+      ],
+      "preparations": [
+        {
+          "method": "Tea/Infusion",
+          "instructions": "Steep 1 teaspoon fresh grated ginger in hot water for 10 minutes",
+          "duration": "Drink as needed, up to 3-4 cups daily"
+        },
+        {
+          "method": "Capsule",
+          "instructions": "Take 250-500 mg",
+          "duration": "3-4 times daily with food"
+        }
+      ],
+      "dosage": {
+        "standardDose": "1-3 grams daily of fresh ginger or 250-1000 mg extract",
+        "maximumDailyDose": "Up to 4 grams daily",
+        "notes": "For nausea, take at first sign of symptoms"
+      },
+      "safetyRating": "Generally Safe",
+      "contraindications": [
+        "Bleeding disorders",
+        "Gallstones (use with caution)"
+      ],
+      "drugInteractions": [
+        {
+          "drug": "Blood thinners",
+          "interaction": "May increase bleeding risk",
+          "severity": "Moderate"
+        },
+        {
+          "drug": "Diabetes medications",
+          "interaction": "May lower blood sugar",
+          "severity": "Moderate"
+        }
+      ],
+      "sideEffects": [
+        "Heartburn",
+        "Diarrhea",
+        "Mouth irritation (with fresh ginger)"
+      ],
+      "pregnancy": "Generally Safe",
+      "breastfeeding": "Generally Safe",
+      "conditionsAddressed": ["cond-003"],
+      "sustainability": {
+        "status": "Cultivated",
+        "notes": "Widely cultivated in tropical regions worldwide"
+      }
+    }
+  ]
+}

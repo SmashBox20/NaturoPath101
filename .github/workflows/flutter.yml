@@ -11,13 +11,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          # Pin to a concrete Flutter SDK version to avoid channel resolution failures.
+          # You can update this version to a newer stable release later.
+          flutter-version: "3.10.6"
+          architecture: X64
+          cache: false
+
+      - name: DEBUG: print environment
+        run: |
+          echo "=== PATH ==="
+          echo "$PATH"
+          echo "=== which flutter ==="
+          which flutter || true
+          echo "=== java -version ==="
+          java -version || true
+          echo "=== dart --version ==="
+          dart --version || true
+
+      - name: DEBUG: flutter --version & doctor
+        run: |
+          flutter --version || true
+          flutter doctor -v || true
+
       - name: Install dependencies
         run: flutter pub get
+
       - name: Analyze
         run: flutter analyze
+
       - name: Run tests
         run: flutter test --coverage || true

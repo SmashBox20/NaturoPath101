@@ -1,0 +1,102 @@
+condition_id,condition_name,synonyms,icd_code
+cond_001,Common Cold,Upper Respiratory Infection|URI|Head Cold,J00
+cond_002,Insomnia,Sleep Disorder|Sleeplessness,G47.0
+cond_003,Mild Anxiety,Nervousness|Worry,F41.1
+cond_004,Headache (Tension),Tension Headache,G44.2
+cond_005,Migraine,Migraine Headache,G43
+cond_006,Indigestion,Dyspepsia|Upset Stomach,K30
+cond_007,Nausea,Queasiness|Upset Stomach,R11
+cond_008,Constipation,Irregularity,K59.0
+cond_009,Diarrhea,Loose Stools,K59.1
+cond_010,Irritable Bowel Syndrome,IBS|Spastic Colon,K58
+cond_011,Heartburn,Acid Reflux|GERD,K21
+cond_012,Bloating,Abdominal Distension,R14
+cond_013,Minor Burns,First-degree Burns,T30
+cond_014,Minor Cuts and Scrapes,Abrasions|Wounds,T14.1
+cond_015,Bruises,Contusions,S00-S09
+cond_016,Muscle Soreness,DOMS|Muscle Pain,M79.1
+cond_017,Joint Pain,Arthralgia,M25.5
+cond_018,Osteoarthritis,Degenerative Joint Disease,M15-M19
+cond_019,Rheumatoid Arthritis,RA,M05-M06
+cond_020,Back Pain (Lower),Lumbago,M54.5
+cond_021,Neck Pain,Cervicalgia,M54.2
+cond_022,Menstrual Cramps,Dysmenorrhea,N94.6
+cond_023,PMS,Premenstrual Syndrome,N94.3
+cond_024,Menopause Symptoms,Hot Flashes|Night Sweats,N95.1
+cond_025,UTI,Urinary Tract Infection|Cystitis,N39.0
+cond_026,Prostate Enlargement,BPH|Benign Prostatic Hyperplasia,N40
+cond_027,Eczema,Atopic Dermatitis,L20-L30
+cond_028,Psoriasis,Plaque Psoriasis,L40
+cond_029,Acne,Acne Vulgaris,L70.0
+cond_030,Rosacea,Facial Redness,L71
+cond_031,Minor Skin Infections,Impetigo|Folliculitis,L01-L08
+cond_032,Fungal Infections,Athlete's Foot|Ringworm,B35-B36
+cond_033,Cold Sores,Herpes Labialis,B00.1
+cond_034,Canker Sores,Aphthous Ulcers,K12.0
+cond_035,Gingivitis,Gum Inflammation,K05.0
+cond_036,Toothache,Dental Pain,K08.8
+cond_037,Seasonal Allergies,Hay Fever|Allergic Rhinitis,J30
+cond_038,Sinus Congestion,Sinusitis,J32
+cond_039,Cough,Tussis,R05
+cond_040,Bronchitis,Acute Bronchitis,J20
+cond_041,Asthma (Mild),Reactive Airway Disease,J45
+cond_042,Sore Throat,Pharyngitis,J02
+cond_043,Laryngitis,Voice Loss|Hoarseness,J04
+cond_044,Ear Infection,Otitis Media,H66
+cond_045,Tinnitus,Ringing in Ears,H93.1
+cond_046,Motion Sickness,Travel Sickness|Seasickness,T75.3
+cond_047,Vertigo,Dizziness|BPPV,H81
+cond_048,Eye Strain,Computer Vision Syndrome,H53.1
+cond_049,Dry Eyes,Keratoconjunctivitis Sicca,H04.1
+cond_050,Pink Eye,Conjunctivitis,H10
+cond_051,High Blood Pressure,Hypertension,I10
+cond_052,High Cholesterol,Hyperlipidemia|Dyslipidemia,E78
+cond_053,Poor Circulation,Peripheral Vascular Disease,I73.9
+cond_054,Varicose Veins,Venous Insufficiency,I83
+cond_055,Hemorrhoids,Piles,K64
+cond_056,Depression (Mild),Low Mood|Dysthymia,F32-F33
+cond_057,Stress,Chronic Stress,Z73.3
+cond_058,Fatigue,Chronic Fatigue|Tiredness,R53
+cond_059,Brain Fog,Cognitive Dysfunction,R41.8
+cond_060,Memory Issues,Forgetfulness|Mild Cognitive Impairment,R41.3
+cond_061,ADHD Symptoms,Attention Deficit|Hyperactivity,F90
+cond_062,Restless Leg Syndrome,RLS|Willis-Ekbom Disease,G25.81
+cond_063,Fibromyalgia,Chronic Widespread Pain,M79.7
+cond_064,Chronic Pain,Persistent Pain,R52
+cond_065,Diabetic Neuropathy,Nerve Pain from Diabetes,E11.4
+cond_066,High Blood Sugar,Hyperglycemia|Pre-diabetes,R73
+cond_067,Low Blood Sugar,Hypoglycemia,E16.2
+cond_068,Thyroid Imbalance (Hypo),Hypothyroidism,E03
+cond_069,Thyroid Imbalance (Hyper),Hyperthyroidism,E05
+cond_070,Adrenal Fatigue,HPA Axis Dysfunction,E27.4
+cond_071,Anemia (Iron Deficiency),Low Iron|IDA,D50
+cond_072,Vitamin D Deficiency,Low Vitamin D,E55.9
+cond_073,Vitamin B12 Deficiency,Low B12,E53.8
+cond_074,Weight Management,Obesity|Overweight,E66
+cond_075,Appetite Loss,Anorexia,R63.0
+cond_076,Hangover,Veisalgia,T51
+cond_077,Nicotine Withdrawal,Smoking Cessation,F17.2
+cond_078,Immune Support,Weak Immunity|Frequent Illness,D84.9
+cond_079,Inflammation (Chronic),Systemic Inflammation,M79.3
+cond_080,Antioxidant Support,Oxidative Stress,Z71.3
+cond_081,Liver Support,Hepatic Function Support,K76.9
+cond_082,Kidney Support,Renal Function Support,N28.9
+cond_083,Cardiovascular Support,Heart Health,I51.9
+cond_084,Brain Health,Neuroprotection|Cognitive Support,G93.4
+cond_085,Bone Health,Osteoporosis Prevention,M81
+cond_086,Hair Loss,Alopecia,L64-L66
+cond_087,Nail Health,Brittle Nails,L60
+cond_088,Wound Healing,Tissue Repair,L89
+cond_089,Dental Health,Oral Hygiene Support,K00-K14
+cond_090,Bad Breath,Halitosis,R19.6
+cond_091,Body Odor,Bromhidrosis,L75.0
+cond_092,Yeast Infections,Candidiasis|Thrush,B37
+cond_093,Parasitic Infections,Intestinal Parasites,B82
+cond_094,Detoxification Support,Cleansing|Elimination Support,Z51.6
+cond_095,Heavy Metal Exposure,Metal Toxicity,T56
+cond_096,Radiation Exposure,Radiation Effects,W88-W90
+cond_097,Chemical Sensitivity,MCS|Environmental Illness,T78.4
+cond_098,Jet Lag,Time Zone Change Disorder,G47.2
+cond_099,Shift Work Sleep Disorder,Circadian Rhythm Disorder,G47.26
+cond_100,Performance Anxiety,Stage Fright,F40.2
+cond_101,General Wellness,Health Maintenance|Preventive Care,Z00-Z13

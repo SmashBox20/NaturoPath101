@@ -1,5 +1,5 @@
 name: naturo_path_101
-description: NaturoPath: 101 — plant-based remedies reference app (starter)
+description: "NaturoPath: 101 — plant-based remedies reference app (starter)"
 version: 0.1.0
 environment:
   sdk: ">=2.18.0 <3.0.0"

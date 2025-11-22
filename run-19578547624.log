@@ -1,0 +1,164 @@
+analyze-and-test	Set up job	﻿2025-11-21T17:33:36.8110353Z Current runner version: '2.329.0'
+analyze-and-test	Set up job	2025-11-21T17:33:36.8137045Z ##[group]Runner Image Provisioner
+analyze-and-test	Set up job	2025-11-21T17:33:36.8137825Z Hosted Compute Agent
+analyze-and-test	Set up job	2025-11-21T17:33:36.8138501Z Version: 20251016.436
+analyze-and-test	Set up job	2025-11-21T17:33:36.8139087Z Commit: 8ab8ac8bfd662a3739dab9fe09456aba92132568
+analyze-and-test	Set up job	2025-11-21T17:33:36.8139805Z Build Date: 2025-10-15T20:44:12Z
+analyze-and-test	Set up job	2025-11-21T17:33:36.8140461Z ##[endgroup]
+analyze-and-test	Set up job	2025-11-21T17:33:36.8141088Z ##[group]Operating System
+analyze-and-test	Set up job	2025-11-21T17:33:36.8141659Z Ubuntu
+analyze-and-test	Set up job	2025-11-21T17:33:36.8142222Z 24.04.3
+analyze-and-test	Set up job	2025-11-21T17:33:36.8142921Z LTS
+analyze-and-test	Set up job	2025-11-21T17:33:36.8143463Z ##[endgroup]
+analyze-and-test	Set up job	2025-11-21T17:33:36.8144041Z ##[group]Runner Image
+analyze-and-test	Set up job	2025-11-21T17:33:36.8144565Z Image: ubuntu-24.04
+analyze-and-test	Set up job	2025-11-21T17:33:36.8145088Z Version: 20251112.124.1
+analyze-and-test	Set up job	2025-11-21T17:33:36.8146136Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251112.124/images/ubuntu/Ubuntu2404-Readme.md
+analyze-and-test	Set up job	2025-11-21T17:33:36.8147586Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251112.124
+analyze-and-test	Set up job	2025-11-21T17:33:36.8148843Z ##[endgroup]
+analyze-and-test	Set up job	2025-11-21T17:33:36.8149912Z ##[group]GITHUB_TOKEN Permissions
+analyze-and-test	Set up job	2025-11-21T17:33:36.8151777Z Contents: read
+analyze-and-test	Set up job	2025-11-21T17:33:36.8152324Z Metadata: read
+analyze-and-test	Set up job	2025-11-21T17:33:36.8153072Z Packages: read
+analyze-and-test	Set up job	2025-11-21T17:33:36.8153519Z ##[endgroup]
+analyze-and-test	Set up job	2025-11-21T17:33:36.8155713Z Secret source: Actions
+analyze-and-test	Set up job	2025-11-21T17:33:36.8156495Z Prepare workflow directory
+analyze-and-test	Set up job	2025-11-21T17:33:36.8475243Z Prepare all required actions
+analyze-and-test	Set up job	2025-11-21T17:33:36.8512094Z Getting action download info
+analyze-and-test	Set up job	2025-11-21T17:33:37.1661293Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+analyze-and-test	Set up job	2025-11-21T17:33:37.4779741Z Download action repository 'subosito/flutter-action@v2' (SHA:fd55f4c5af5b953cc57a2be44cb082c8f6635e8e)
+analyze-and-test	Set up job	2025-11-21T17:33:37.7615242Z Getting action download info
+analyze-and-test	Set up job	2025-11-21T17:33:37.8598422Z Download action repository 'actions/cache@v4' (SHA:0057852bfaa89a56745cba8c7296529d2fc39830)
+analyze-and-test	Set up job	2025-11-21T17:33:37.9903106Z Complete job name: analyze-and-test
+analyze-and-test	Run actions/checkout@v4	﻿2025-11-21T17:33:38.0603624Z ##[group]Run actions/checkout@v4
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0604566Z with:
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0605021Z   repository: SmashBox20/NaturoPath101
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0605753Z   token: ***
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0606150Z   ssh-strict: true
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0606561Z   ssh-user: git
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0607029Z   persist-credentials: true
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0607500Z   clean: true
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0607925Z   sparse-checkout-cone-mode: true
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0608431Z   fetch-depth: 1
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0608846Z   fetch-tags: false
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0609268Z   show-progress: true
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0609701Z   lfs: false
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0610091Z   submodules: false
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0610517Z   set-safe-directory: true
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.0611197Z ##[endgroup]
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1720973Z Syncing repository: SmashBox20/NaturoPath101
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1724318Z ##[group]Getting Git version info
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1725813Z Working directory is '/home/runner/work/NaturoPath101/NaturoPath101'
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1728054Z [command]/usr/bin/git version
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1791493Z git version 2.51.2
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1819094Z ##[endgroup]
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1834783Z Temporarily overriding HOME='/home/runner/work/_temp/28c81738-772c-4777-82f9-71c3a2f0fb05' before making global git config changes
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1837509Z Adding repository directory to the temporary git global config as a safe directory
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1841445Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/NaturoPath101/NaturoPath101
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1878177Z Deleting the contents of '/home/runner/work/NaturoPath101/NaturoPath101'
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1882104Z ##[group]Initializing the repository
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1887169Z [command]/usr/bin/git init /home/runner/work/NaturoPath101/NaturoPath101
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1997944Z hint: Using 'master' as the name for the initial branch. This default branch name
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.1999352Z hint: is subject to change. To configure the initial branch name to use in all
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2001372Z hint: of your new repositories, which will suppress this warning, call:
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2002215Z hint:
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2003349Z hint: 	git config --global init.defaultBranch <name>
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2004817Z hint:
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2005971Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2007833Z hint: 'development'. The just-created branch can be renamed via this command:
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2009316Z hint:
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2010077Z hint: 	git branch -m <name>
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2010919Z hint:
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2012091Z hint: Disable this message with "git config set advice.defaultBranchName false"
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2014482Z Initialized empty Git repository in /home/runner/work/NaturoPath101/NaturoPath101/.git/
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2017939Z [command]/usr/bin/git remote add origin https://github.com/SmashBox20/NaturoPath101
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2053131Z ##[endgroup]
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2054517Z ##[group]Disabling automatic garbage collection
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2057990Z [command]/usr/bin/git config --local gc.auto 0
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2086424Z ##[endgroup]
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2087608Z ##[group]Setting up auth
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2093001Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2122097Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2463152Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2491386Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2704623Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2741960Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2960611Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.2992272Z ##[endgroup]
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.3000073Z ##[group]Fetching the repository
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.3001457Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +7fe532d34ab80c3d92542ccd5b71354176f9f163:refs/remotes/pull/5/merge
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.4879336Z From https://github.com/SmashBox20/NaturoPath101
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.4881639Z  * [new ref]         7fe532d34ab80c3d92542ccd5b71354176f9f163 -> pull/5/merge
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.4914695Z ##[endgroup]
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.4915956Z ##[group]Determining the checkout info
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.4917365Z ##[endgroup]
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.4922367Z [command]/usr/bin/git sparse-checkout disable
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.4961476Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.4987020Z ##[group]Checking out the ref
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.4990287Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/5/merge
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5041887Z Note: switching to 'refs/remotes/pull/5/merge'.
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5042962Z 
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5043440Z You are in 'detached HEAD' state. You can look around, make experimental
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5044285Z changes and commit them, and you can discard any commits you make in this
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5045112Z state without impacting any branches by switching back to a branch.
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5045619Z 
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5046181Z If you want to create a new branch to retain commits you create, you may
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5047619Z do so (now or later) by using -c with the switch command. Example:
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5048469Z 
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5048830Z   git switch -c <new-branch-name>
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5049415Z 
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5050123Z Or undo this operation with:
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5050717Z 
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5051027Z   git switch -
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5051440Z 
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5052061Z Turn off this advice by setting config variable advice.detachedHead to false
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5053204Z 
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5054310Z HEAD is now at 7fe532d Merge f245b399d2bb4826ac382092ae34c06dc85fbfe1 into d53f26e79c458c75d8f539ff54ec915995758853
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5057396Z ##[endgroup]
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5086900Z [command]/usr/bin/git log -1 --format=%H
+analyze-and-test	Run actions/checkout@v4	2025-11-21T17:33:38.5108851Z 7fe532d34ab80c3d92542ccd5b71354176f9f163
+analyze-and-test	Set up Flutter	﻿2025-11-21T17:33:38.5430336Z ##[group]Run subosito/flutter-action@v2
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5430901Z with:
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5431263Z   flutter-version: stable
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5431669Z   channel: stable
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5432041Z   architecture: X64
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5432400Z   cache: false
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5432933Z   pub-cache-path: default
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5433356Z   dry-run: false
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5433822Z   git-source: https://github.com/flutter/flutter.git
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5434373Z ##[endgroup]
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5613969Z ##[group]Run chmod +x "$GITHUB_ACTION_PATH/setup.sh"
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5614667Z [36;1mchmod +x "$GITHUB_ACTION_PATH/setup.sh"[0m
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5651429Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5652068Z ##[endgroup]
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5794890Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh -p \
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5795536Z [36;1m$GITHUB_ACTION_PATH/setup.sh -p \[0m
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5796054Z [36;1m  -n 'stable' \[0m
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5796476Z [36;1m  -f '' \[0m
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5796894Z [36;1m  -a 'X64' \[0m
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5797280Z [36;1m  -k '' \[0m
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5797639Z [36;1m  -c '' \[0m
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5798005Z [36;1m  -l '' \[0m
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5798381Z [36;1m  -d 'default' \[0m
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5798897Z [36;1m  -g 'https://github.com/flutter/flutter.git' \[0m
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5799451Z [36;1m  stable[0m
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5830121Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.5830742Z ##[endgroup]
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.6830829Z Unable to determine Flutter version for channel: stable version: stable architecture: x64
+analyze-and-test	Set up Flutter	2025-11-21T17:33:38.6845385Z ##[error]Process completed with exit code 1.
+analyze-and-test	Post Set up Flutter	﻿2025-11-21T17:33:38.7096714Z Post job cleanup.
+analyze-and-test	Post Run actions/checkout@v4	﻿2025-11-21T17:33:38.7193212Z Post job cleanup.
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8141113Z [command]/usr/bin/git version
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8181057Z git version 2.51.2
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8225347Z Temporarily overriding HOME='/home/runner/work/_temp/77a11fff-4f32-42bc-b647-19f28c589ec4' before making global git config changes
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8227798Z Adding repository directory to the temporary git global config as a safe directory
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8238824Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/NaturoPath101/NaturoPath101
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8273477Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8307300Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8555187Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8577720Z http.https://github.com/.extraheader
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8593359Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8624583Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8858207Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+analyze-and-test	Post Run actions/checkout@v4	2025-11-21T17:33:38.8894290Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+analyze-and-test	Complete job	﻿2025-11-21T17:33:38.9217842Z Cleaning up orphan processes

@@ -1,0 +1,5930 @@
+From 360da037bd2b053b1f96954e4d60efb6c1b290fa Mon Sep 17 00:00:00 2001
+From: "copilot-swe-agent[bot]" <198982749+Copilot@users.noreply.github.com>
+Date: Fri, 21 Nov 2025 13:49:48 +0000
+Subject: [PATCH 1/2] Initial plan
+
+
+From 7b63d82e5834e0a5fe81724412458483bcf0ccfa Mon Sep 17 00:00:00 2001
+From: "copilot-swe-agent[bot]" <198982749+Copilot@users.noreply.github.com>
+Date: Fri, 21 Nov 2025 14:07:17 +0000
+Subject: [PATCH 2/2] Initial project import: product docs, data schema, sample
+ entries, CSV list, disclaimer, privacy, and Flutter starter.
+
+Co-authored-by: SmashBox20 <99506574+SmashBox20@users.noreply.github.com>
+---
+ api-design.md                                 | 852 ++++++++++++++++++
+ conditions-101.csv                            | 102 +++
+ content-template.md                           | 485 ++++++++++
+ data-schema.json                              | 368 ++++++++
+ disclaimer.md                                 | 141 +++
+ flutter-starter/README.md                     | 426 +++++++++
+ flutter-starter/lib/main.dart                 | 111 +++
+ flutter-starter/lib/models/condition.dart     | 138 +++
+ flutter-starter/lib/models/plant.dart         | 277 ++++++
+ flutter-starter/lib/screens/home_screen.dart  | 357 ++++++++
+ .../services/medicine_cabinet_service.dart    | 316 +++++++
+ flutter-starter/pubspec.yaml                  |  68 ++
+ privacy-security.md                           | 401 +++++++++
+ product-requirements.md                       |  91 ++
+ sample-entries.json                           | 581 ++++++++++++
+ subscription-pricing.md                       | 409 +++++++++
+ ui-wireframes.md                              | 655 ++++++++++++++
+ 17 files changed, 5778 insertions(+)
+ create mode 100644 api-design.md
+ create mode 100644 conditions-101.csv
+ create mode 100644 content-template.md
+ create mode 100644 data-schema.json
+ create mode 100644 disclaimer.md
+ create mode 100644 flutter-starter/README.md
+ create mode 100644 flutter-starter/lib/main.dart
+ create mode 100644 flutter-starter/lib/models/condition.dart
+ create mode 100644 flutter-starter/lib/models/plant.dart
+ create mode 100644 flutter-starter/lib/screens/home_screen.dart
+ create mode 100644 flutter-starter/lib/services/medicine_cabinet_service.dart
+ create mode 100644 flutter-starter/pubspec.yaml
+ create mode 100644 privacy-security.md
+ create mode 100644 product-requirements.md
+ create mode 100644 sample-entries.json
+ create mode 100644 subscription-pricing.md
+ create mode 100644 ui-wireframes.md
+
+diff --git a/api-design.md b/api-design.md
+new file mode 100644
+index 0000000..9676153
+--- /dev/null
++++ b/api-design.md
+@@ -0,0 +1,852 @@
++# API Design — NaturoPath: 101
++
++## Overview
++
++This document outlines the API design for NaturoPath: 101. The API supports content delivery, search, user management, and premium features including the Medicine Cabinet interaction checker.
++
++## Architecture Options
++
++### Option 1: GraphQL (Recommended)
++**Advantages:**
++- Single endpoint for all queries
++- Client specifies exactly what data it needs (reduces over-fetching)
++- Strong typing with schema
++- Excellent for complex, nested data (plants, conditions, phytochemicals, references)
++- Built-in introspection and documentation
++- Good tooling (Apollo Client/Server, GraphQL Playground)
++
++**Recommended Stack:**
++- **Server**: Node.js + Apollo Server
++- **Database**: PostgreSQL for structured data
++- **Search**: Elasticsearch or OpenSearch
++- **Client**: Apollo Client (Flutter has graphql_flutter package)
++
++### Option 2: REST
++**Advantages:**
++- More familiar to many developers
++- Easier caching with HTTP
++- Simpler for basic CRUD operations
++
++**Recommended Stack:**
++- **Server**: Node.js + Express or Fastify
++- **Database**: PostgreSQL
++- **Search**: Elasticsearch or OpenSearch
++- **Client**: Dio or http package (Flutter)
++
++### Option 3: Firebase (Quickest to MVP)
++**Advantages:**
++- Fastest to implement
++- Authentication built-in
++- Real-time sync
++- Generous free tier
++- Good Flutter support (FlutterFire)
++
++**Limitations:**
++- Less flexible querying
++- More expensive at scale
++- Vendor lock-in
++
++**Recommended for:**
++- Prototyping
++- Small-scale deployment
++- When team has limited backend experience
++
++## API Specification (GraphQL)
++
++### Schema
++
++#### Types
++
++```graphql
++scalar DateTime
++scalar JSON
++
++enum EvidenceLevel {
++  TRADITIONAL
++  IN_VITRO
++  ANIMAL
++  HUMAN_TRIAL
++  STRONG_CLINICAL
++}
++
++enum Severity {
++  MILD
++  MODERATE
++  SEVERE
++  CONTRAINDICATED
++}
++
++enum InteractionSeverity {
++  MINOR
++  MODERATE
++  MAJOR
++  CONTRAINDICATED
++}
++
++type Reference {
++  type: String!
++  id: String
++  title: String!
++  authors: String
++  year: Int
++  url: String
++}
++
++type Phytochemical {
++  name: String!
++  chemicalClass: String
++  pubchemId: String
++  casNumber: String
++  proposedMechanism: String
++  concentration: String
++}
++
++type PreparationMethod {
++  method: String!
++  instructions: String!
++  dosage: String
++  frequency: String
++  duration: String
++  notes: String
++}
++
++type Contraindication {
++  category: String!
++  severity: Severity!
++  description: String!
++  references: [Reference!]
++}
++
++type Image {
++  url: String!
++  altText: String!
++  caption: String
++  imageType: String!
++  thumbnailUrl: String
++  attribution: String
++  license: String
++}
++
++type HarvestingGuidance {
++  partUsed: [String!]
++  harvestSeason: String
++  sustainabilityNotes: String
++  cultivationDifficulty: String
++}
++
++type Plant {
++  id: ID!
++  scientificName: String!
++  commonNames: [String!]!
++  family: String
++  genus: String
++  species: String
++  description: String!
++  images: [Image!]
++  phytochemicals: [Phytochemical!]
++  preparationMethods: [PreparationMethod!]
++  contraindications: [Contraindication!]
++  harvestingGuidance: HarvestingGuidance
++  evidenceLevel: EvidenceLevel!
++  references: [Reference!]
++  lastReviewedDate: DateTime
++  reviewedBy: [String!]
++  
++  # Relations
++  conditions: [Condition!]
++}
++
++type RecommendedPlant {
++  plant: Plant!
++  usage: String!
++  evidenceLevel: EvidenceLevel
++}
++
++type Condition {
++  id: ID!
++  name: String!
++  synonyms: [String!]
++  icdCodes: [String!]
++  overview: String!
++  symptoms: [String!]!
++  redFlags: [String!]!
++  recommendedPlants: [RecommendedPlant!]!
++  evidenceLevel: EvidenceLevel!
++  references: [Reference!]
++  lastReviewedDate: DateTime
++  reviewedBy: [String!]
++}
++
++type Interaction {
++  id: ID!
++  plant: Plant!
++  drugName: String!
++  activeIngredient: String
++  rxNormCode: String
++  interactionType: String
++  severity: InteractionSeverity!
++  mechanism: String
++  clinicalSignificance: String
++  recommendation: String!
++  references: [Reference!]
++}
++
++type SearchResult {
++  conditions: [Condition!]
++  plants: [Plant!]
++  totalCount: Int!
++}
++
++type User {
++  id: ID!
++  email: String!
++  subscriptionTier: SubscriptionTier!
++  subscriptionExpiry: DateTime
++  createdAt: DateTime!
++}
++
++enum SubscriptionTier {
++  FREE
++  STANDARD
++  PREMIUM
++}
++
++type Subscription {
++  id: ID!
++  userId: ID!
++  tier: SubscriptionTier!
++  status: String!
++  expiresAt: DateTime
++  platformReceiptData: String
++}
++
++input MedicationInput {
++  name: String!
++  activeIngredients: [String!]
++  rxNormCode: String
++}
++
++type InteractionCheck {
++  medication: String!
++  interactions: [Interaction!]!
++  summary: String!
++  maxSeverity: InteractionSeverity!
++}
++```
++
++#### Queries
++
++```graphql
++type Query {
++  # Content retrieval
++  condition(id: ID!): Condition
++  conditions(
++    offset: Int
++    limit: Int
++    evidenceLevel: EvidenceLevel
++  ): [Condition!]!
++  
++  plant(id: ID!): Plant
++  plants(
++    offset: Int
++    limit: Int
++    evidenceLevel: EvidenceLevel
++  ): [Plant!]!
++  
++  # Search
++  search(
++    query: String!
++    filters: SearchFilters
++    offset: Int
++    limit: Int
++  ): SearchResult!
++  
++  # Medicine Cabinet (Premium)
++  checkInteractions(
++    medications: [MedicationInput!]!
++    plants: [ID!]!
++  ): [InteractionCheck!]!
++  
++  # User
++  me: User
++  mySubscription: Subscription
++}
++
++input SearchFilters {
++  evidenceLevel: [EvidenceLevel!]
++  contraindication: [String!]
++  preparationMethod: [String!]
++}
++```
++
++#### Mutations
++
++```graphql
++type Mutation {
++  # Authentication
++  register(email: String!, password: String!): AuthPayload!
++  login(email: String!, password: String!): AuthPayload!
++  refreshToken(refreshToken: String!): AuthPayload!
++  
++  # Subscription management
++  createSubscription(
++    tier: SubscriptionTier!
++    platform: String!
++    receiptData: String!
++  ): Subscription!
++  
++  validateSubscription(receiptData: String!): Subscription!
++  
++  # User management
++  updateProfile(email: String): User!
++  deleteAccount: Boolean!
++}
++
++type AuthPayload {
++  token: String!
++  refreshToken: String!
++  user: User!
++}
++```
++
++#### Subscriptions (Real-time)
++
++```graphql
++type Subscription {
++  # Content updates (for offline sync)
++  contentUpdated: ContentUpdate!
++}
++
++type ContentUpdate {
++  type: String!
++  id: ID!
++  timestamp: DateTime!
++}
++```
++
++## REST API Endpoints (Alternative)
++
++### Content Endpoints
++
++```
++GET /api/v1/conditions
++  Query params: 
++    - offset (default: 0)
++    - limit (default: 20, max: 100)
++    - evidence_level (optional filter)
++  Response: { conditions: [...], total: N }
++
++GET /api/v1/conditions/:id
++  Response: { condition: {...} }
++
++GET /api/v1/plants
++  Query params: offset, limit, evidence_level
++  Response: { plants: [...], total: N }
++
++GET /api/v1/plants/:id
++  Response: { plant: {...} }
++
++GET /api/v1/search
++  Query params:
++    - q (query string)
++    - type (condition|plant|both)
++    - evidence_level (filter)
++    - offset, limit
++  Response: { conditions: [...], plants: [...], total: N }
++```
++
++### Medicine Cabinet Endpoints (Premium)
++
++```
++POST /api/v1/interactions/check
++  Headers: Authorization: Bearer <token>
++  Body: {
++    medications: [
++      { name, activeIngredients, rxNormCode }
++    ],
++    plantIds: [...]
++  }
++  Response: {
++    checks: [
++      {
++        medication,
++        interactions: [...],
++        maxSeverity,
++        summary
++      }
++    ]
++  }
++```
++
++### Authentication Endpoints
++
++```
++POST /api/v1/auth/register
++  Body: { email, password }
++  Response: { token, refreshToken, user }
++
++POST /api/v1/auth/login
++  Body: { email, password }
++  Response: { token, refreshToken, user }
++
++POST /api/v1/auth/refresh
++  Body: { refreshToken }
++  Response: { token, refreshToken }
++
++POST /api/v1/auth/logout
++  Headers: Authorization: Bearer <token>
++  Response: { success: true }
++```
++
++### User Endpoints
++
++```
++GET /api/v1/users/me
++  Headers: Authorization: Bearer <token>
++  Response: { user: {...} }
++
++PUT /api/v1/users/me
++  Headers: Authorization: Bearer <token>
++  Body: { email }
++  Response: { user: {...} }
++
++DELETE /api/v1/users/me
++  Headers: Authorization: Bearer <token>
++  Response: { success: true }
++```
++
++### Subscription Endpoints
++
++```
++POST /api/v1/subscriptions
++  Headers: Authorization: Bearer <token>
++  Body: {
++    tier,
++    platform, // 'apple' | 'google' | 'stripe'
++    receiptData // platform-specific receipt/token
++  }
++  Response: { subscription: {...} }
++
++GET /api/v1/subscriptions/me
++  Headers: Authorization: Bearer <token>
++  Response: { subscription: {...} }
++
++POST /api/v1/subscriptions/validate
++  Headers: Authorization: Bearer <token>
++  Body: { receiptData }
++  Response: { subscription: {...}, valid: true/false }
++```
++
++## Search Implementation
++
++### Elasticsearch/OpenSearch
++
++**Index Structure:**
++
++```json
++{
++  "conditions": {
++    "mappings": {
++      "properties": {
++        "id": { "type": "keyword" },
++        "name": { 
++          "type": "text",
++          "fields": {
++            "keyword": { "type": "keyword" }
++          }
++        },
++        "synonyms": { "type": "text" },
++        "overview": { "type": "text" },
++        "symptoms": { "type": "text" },
++        "icdCodes": { "type": "keyword" },
++        "evidence_level": { "type": "keyword" },
++        "plant_ids": { "type": "keyword" }
++      }
++    }
++  },
++  "plants": {
++    "mappings": {
++      "properties": {
++        "id": { "type": "keyword" },
++        "scientific_name": {
++          "type": "text",
++          "fields": {
++            "keyword": { "type": "keyword" }
++          }
++        },
++        "common_names": { "type": "text" },
++        "description": { "type": "text" },
++        "family": { "type": "keyword" },
++        "evidence_level": { "type": "keyword" },
++        "contraindications": { "type": "keyword" }
++      }
++    }
++  }
++}
++```
++
++**Search Query Example:**
++
++```json
++{
++  "query": {
++    "multi_match": {
++      "query": "sleep",
++      "fields": [
++        "name^3",
++        "synonyms^2",
++        "overview",
++        "symptoms"
++      ],
++      "fuzziness": "AUTO"
++    }
++  },
++  "suggest": {
++    "condition_suggestion": {
++      "prefix": "sle",
++      "completion": {
++        "field": "name.suggest"
++      }
++    }
++  }
++}
++```
++
++### Typeahead/Autocomplete
++
++**Implementation:**
++- Use Elasticsearch completion suggester
++- Pre-index common search terms
++- Return results after 2-3 characters typed
++- Debounce client-side (300ms)
++- Cache common searches
++
++**Example Response:**
++```json
++{
++  "suggestions": [
++    { "type": "condition", "id": "cond_002", "name": "Insomnia" },
++    { "type": "plant", "id": "plant_002", "name": "Valerian" }
++  ]
++}
++```
++
++## Database Schema (PostgreSQL)
++
++### Core Tables
++
++```sql
++CREATE TABLE conditions (
++  id VARCHAR(50) PRIMARY KEY,
++  name VARCHAR(255) NOT NULL,
++  synonyms TEXT[],
++  icd_codes VARCHAR(20)[],
++  overview TEXT NOT NULL,
++  symptoms TEXT[] NOT NULL,
++  red_flags TEXT[] NOT NULL,
++  evidence_level VARCHAR(50) NOT NULL,
++  last_reviewed_date DATE,
++  created_at TIMESTAMP DEFAULT NOW(),
++  updated_at TIMESTAMP DEFAULT NOW()
++);
++
++CREATE TABLE plants (
++  id VARCHAR(50) PRIMARY KEY,
++  scientific_name VARCHAR(255) NOT NULL,
++  common_names TEXT[] NOT NULL,
++  family VARCHAR(100),
++  genus VARCHAR(100),
++  species VARCHAR(100),
++  description TEXT NOT NULL,
++  evidence_level VARCHAR(50) NOT NULL,
++  last_reviewed_date DATE,
++  created_at TIMESTAMP DEFAULT NOW(),
++  updated_at TIMESTAMP DEFAULT NOW()
++);
++
++CREATE TABLE condition_plants (
++  id SERIAL PRIMARY KEY,
++  condition_id VARCHAR(50) REFERENCES conditions(id) ON DELETE CASCADE,
++  plant_id VARCHAR(50) REFERENCES plants(id) ON DELETE CASCADE,
++  usage TEXT NOT NULL,
++  evidence_level VARCHAR(50),
++  sort_order INT DEFAULT 0,
++  UNIQUE(condition_id, plant_id)
++);
++
++CREATE TABLE phytochemicals (
++  id SERIAL PRIMARY KEY,
++  plant_id VARCHAR(50) REFERENCES plants(id) ON DELETE CASCADE,
++  name VARCHAR(255) NOT NULL,
++  chemical_class VARCHAR(100),
++  pubchem_id VARCHAR(50),
++  cas_number VARCHAR(50),
++  proposed_mechanism TEXT,
++  concentration VARCHAR(100)
++);
++
++CREATE TABLE preparation_methods (
++  id SERIAL PRIMARY KEY,
++  plant_id VARCHAR(50) REFERENCES plants(id) ON DELETE CASCADE,
++  method VARCHAR(50) NOT NULL,
++  instructions TEXT NOT NULL,
++  dosage VARCHAR(255),
++  frequency VARCHAR(255),
++  duration VARCHAR(255),
++  notes TEXT
++);
++
++CREATE TABLE contraindications (
++  id SERIAL PRIMARY KEY,
++  plant_id VARCHAR(50) REFERENCES plants(id) ON DELETE CASCADE,
++  category VARCHAR(50) NOT NULL,
++  severity VARCHAR(50) NOT NULL,
++  description TEXT NOT NULL
++);
++
++CREATE TABLE images (
++  id SERIAL PRIMARY KEY,
++  plant_id VARCHAR(50) REFERENCES plants(id) ON DELETE CASCADE,
++  url TEXT NOT NULL,
++  alt_text TEXT NOT NULL,
++  caption TEXT,
++  image_type VARCHAR(50) NOT NULL,
++  thumbnail_url TEXT,
++  attribution TEXT,
++  license VARCHAR(100),
++  sort_order INT DEFAULT 0
++);
++
++CREATE TABLE references (
++  id SERIAL PRIMARY KEY,
++  entity_type VARCHAR(50) NOT NULL, -- 'plant', 'condition', 'contraindication'
++  entity_id VARCHAR(50) NOT NULL,
++  ref_type VARCHAR(50) NOT NULL,
++  ref_id VARCHAR(100),
++  title TEXT NOT NULL,
++  authors TEXT,
++  year INT,
++  url TEXT
++);
++
++CREATE TABLE interactions (
++  id VARCHAR(50) PRIMARY KEY,
++  plant_id VARCHAR(50) REFERENCES plants(id) ON DELETE CASCADE,
++  drug_name VARCHAR(255) NOT NULL,
++  active_ingredient VARCHAR(255),
++  rxnorm_code VARCHAR(50),
++  interaction_type VARCHAR(50),
++  severity VARCHAR(50) NOT NULL,
++  mechanism TEXT,
++  clinical_significance TEXT,
++  recommendation TEXT NOT NULL,
++  created_at TIMESTAMP DEFAULT NOW(),
++  updated_at TIMESTAMP DEFAULT NOW()
++);
++
++CREATE TABLE users (
++  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
++  email VARCHAR(255) UNIQUE NOT NULL,
++  password_hash VARCHAR(255) NOT NULL,
++  subscription_tier VARCHAR(20) DEFAULT 'FREE',
++  created_at TIMESTAMP DEFAULT NOW(),
++  updated_at TIMESTAMP DEFAULT NOW()
++);
++
++CREATE TABLE subscriptions (
++  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
++  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
++  tier VARCHAR(20) NOT NULL,
++  status VARCHAR(50) NOT NULL, -- active, expired, canceled
++  platform VARCHAR(50) NOT NULL, -- apple, google, stripe
++  platform_subscription_id VARCHAR(255),
++  receipt_data TEXT,
++  expires_at TIMESTAMP,
++  created_at TIMESTAMP DEFAULT NOW(),
++  updated_at TIMESTAMP DEFAULT NOW()
++);
++
++CREATE INDEX idx_conditions_evidence ON conditions(evidence_level);
++CREATE INDEX idx_plants_evidence ON plants(evidence_level);
++CREATE INDEX idx_condition_plants_condition ON condition_plants(condition_id);
++CREATE INDEX idx_condition_plants_plant ON condition_plants(plant_id);
++CREATE INDEX idx_interactions_plant ON interactions(plant_id);
++CREATE INDEX idx_interactions_drug ON interactions(drug_name);
++CREATE INDEX idx_users_email ON users(email);
++CREATE INDEX idx_subscriptions_user ON subscriptions(user_id);
++```
++
++## Authentication & Authorization
++
++### JWT Token Structure
++
++```json
++{
++  "sub": "user-uuid",
++  "email": "user@example.com",
++  "tier": "PREMIUM",
++  "iat": 1234567890,
++  "exp": 1234571490
++}
++```
++
++**Token Expiration:**
++- Access token: 15 minutes
++- Refresh token: 30 days
++
++**Security:**
++- Use RS256 (asymmetric) for JWT signing
++- Store refresh tokens in database (allows revocation)
++- Rotate refresh tokens on use
++- Implement token blacklist for logout
++
++### Authorization Rules
++
++- **Free tier**: Read access to sample content (first 10 conditions)
++- **Standard tier**: Read access to all content
++- **Premium tier**: All Standard + Medicine Cabinet interactions
++
++## Rate Limiting
++
++```
++Unauthenticated:
++  - Search: 10 requests/minute
++  - Content: 30 requests/minute
++
++Free tier:
++  - Search: 30 requests/minute
++  - Content: 60 requests/minute
++
++Standard/Premium:
++  - Search: 100 requests/minute
++  - Content: 200 requests/minute
++  - Interactions (Premium only): 50 requests/minute
++```
++
++## Caching Strategy
++
++### CDN/Edge Caching
++- Static content (images): 1 year
++- Plant/condition data: 1 day
++- API responses: 5 minutes (with ETag)
++
++### Application Caching
++- Redis for frequently accessed data
++- Cache search results (5 minutes)
++- Cache plant/condition data (1 hour)
++- Invalidate cache on content updates
++
++### Client Caching
++- Aggressive caching with ETag/If-None-Match
++- Service worker for web PWA
++- Local SQLite database for mobile offline access
++
++## Offline Support
++
++### Content Bundles
++
++**Approach:**
++- Pre-generate downloadable content bundles
++- Store as SQLite databases
++- Sign bundles for integrity verification
++
++**Bundle Structure:**
++```
++bundle_v1.0_20240115.db
++  - Contains: conditions, plants, phytochemicals, etc.
++  - Excludes: user data, interactions (server-side only)
++  - Size: ~50-100MB compressed
++```
++
++**API Endpoints:**
++```
++GET /api/v1/bundles/latest
++  Response: {
++    version: "1.0",
++    date: "2024-01-15",
++    url: "https://cdn.../bundle_v1.0_20240115.db.gz",
++    checksum: "sha256:...",
++    size: 52428800
++  }
++
++GET /api/v1/bundles/check
++  Query params: current_version
++  Response: {
++    updateAvailable: true/false,
++    latest: {...}
++  }
++```
++
++## Content Updates & Versioning
++
++### Versioning Strategy
++- Semantic versioning for content (major.minor.patch)
++- Major: Structural changes, removed content
++- Minor: New content, significant updates
++- Patch: Corrections, minor updates
++
++### Update Mechanism
++- Poll for updates on app start (if online)
++- Download incremental updates when possible
++- Full bundle update as fallback
++- User controls when to download (Wi-Fi only option)
++
++## Error Handling
++
++### Standard Error Response
++
++```json
++{
++  "error": {
++    "code": "RESOURCE_NOT_FOUND",
++    "message": "Condition not found",
++    "statusCode": 404,
++    "details": {
++      "requestedId": "cond_999"
++    }
++  }
++}
++```
++
++### Error Codes
++
++- `UNAUTHORIZED` (401)
++- `FORBIDDEN` (403) - Valid auth but insufficient permissions
++- `RESOURCE_NOT_FOUND` (404)
++- `VALIDATION_ERROR` (400)
++- `RATE_LIMIT_EXCEEDED` (429)
++- `SERVER_ERROR` (500)
++- `SERVICE_UNAVAILABLE` (503)
++
++## Performance Targets
++
++- Search response: < 200ms (p95)
++- Content retrieval: < 100ms (p95)
++- Interaction check: < 500ms (p95)
++- Image load (CDN): < 300ms (p95)
++- API availability: 99.9%
++
++## Monitoring & Observability
++
++### Metrics to Track
++- Request rate and latency (per endpoint)
++- Error rate (per endpoint and error type)
++- Search query performance
++- Cache hit rates
++- Database query performance
++- Subscription validation success rate
++
++### Logging
++- Structured JSON logs
++- Include request ID for tracing
++- **Never log**: PHI, passwords, tokens
++- **Log**: Request metadata, errors, performance metrics
++
++### Tools
++- **APM**: New Relic, Datadog, or open-source (Prometheus + Grafana)
++- **Error tracking**: Sentry
++- **Logging**: CloudWatch, ELK stack, or Loki
++
++---
++
++**This API design balances flexibility, performance, and security while supporting both current features and future expansion.**
+diff --git a/conditions-101.csv b/conditions-101.csv
+new file mode 100644
+index 0000000..21aa2f5
+--- /dev/null
++++ b/conditions-101.csv
+@@ -0,0 +1,102 @@
++condition_id,condition_name,synonyms,icd_code
++cond_001,Common Cold,Upper Respiratory Infection|URI|Head Cold,J00
++cond_002,Insomnia,Sleep Disorder|Sleeplessness,G47.0
++cond_003,Mild Anxiety,Nervousness|Worry,F41.1
++cond_004,Headache (Tension),Tension Headache,G44.2
++cond_005,Migraine,Migraine Headache,G43
++cond_006,Indigestion,Dyspepsia|Upset Stomach,K30
++cond_007,Nausea,Queasiness|Upset Stomach,R11
++cond_008,Constipation,Irregularity,K59.0
++cond_009,Diarrhea,Loose Stools,K59.1
++cond_010,Irritable Bowel Syndrome,IBS|Spastic Colon,K58
++cond_011,Heartburn,Acid Reflux|GERD,K21
++cond_012,Bloating,Abdominal Distension,R14
++cond_013,Minor Burns,First-degree Burns,T30
++cond_014,Minor Cuts and Scrapes,Abrasions|Wounds,T14.1
++cond_015,Bruises,Contusions,S00-S09
++cond_016,Muscle Soreness,DOMS|Muscle Pain,M79.1
++cond_017,Joint Pain,Arthralgia,M25.5
++cond_018,Osteoarthritis,Degenerative Joint Disease,M15-M19
++cond_019,Rheumatoid Arthritis,RA,M05-M06
++cond_020,Back Pain (Lower),Lumbago,M54.5
++cond_021,Neck Pain,Cervicalgia,M54.2
++cond_022,Menstrual Cramps,Dysmenorrhea,N94.6
++cond_023,PMS,Premenstrual Syndrome,N94.3
++cond_024,Menopause Symptoms,Hot Flashes|Night Sweats,N95.1
++cond_025,UTI,Urinary Tract Infection|Cystitis,N39.0
++cond_026,Prostate Enlargement,BPH|Benign Prostatic Hyperplasia,N40
++cond_027,Eczema,Atopic Dermatitis,L20-L30
++cond_028,Psoriasis,Plaque Psoriasis,L40
++cond_029,Acne,Acne Vulgaris,L70.0
++cond_030,Rosacea,Facial Redness,L71
++cond_031,Minor Skin Infections,Impetigo|Folliculitis,L01-L08
++cond_032,Fungal Infections,Athlete's Foot|Ringworm,B35-B36
++cond_033,Cold Sores,Herpes Labialis,B00.1
++cond_034,Canker Sores,Aphthous Ulcers,K12.0
++cond_035,Gingivitis,Gum Inflammation,K05.0
++cond_036,Toothache,Dental Pain,K08.8
++cond_037,Seasonal Allergies,Hay Fever|Allergic Rhinitis,J30
++cond_038,Sinus Congestion,Sinusitis,J32
++cond_039,Cough,Tussis,R05
++cond_040,Bronchitis,Acute Bronchitis,J20
++cond_041,Asthma (Mild),Reactive Airway Disease,J45
++cond_042,Sore Throat,Pharyngitis,J02
++cond_043,Laryngitis,Voice Loss|Hoarseness,J04
++cond_044,Ear Infection,Otitis Media,H66
++cond_045,Tinnitus,Ringing in Ears,H93.1
++cond_046,Motion Sickness,Travel Sickness|Seasickness,T75.3
++cond_047,Vertigo,Dizziness|BPPV,H81
++cond_048,Eye Strain,Computer Vision Syndrome,H53.1
++cond_049,Dry Eyes,Keratoconjunctivitis Sicca,H04.1
++cond_050,Pink Eye,Conjunctivitis,H10
++cond_051,High Blood Pressure,Hypertension,I10
++cond_052,High Cholesterol,Hyperlipidemia|Dyslipidemia,E78
++cond_053,Poor Circulation,Peripheral Vascular Disease,I73.9
++cond_054,Varicose Veins,Venous Insufficiency,I83
++cond_055,Hemorrhoids,Piles,K64
++cond_056,Depression (Mild),Low Mood|Dysthymia,F32-F33
++cond_057,Stress,Chronic Stress,Z73.3
++cond_058,Fatigue,Chronic Fatigue|Tiredness,R53
++cond_059,Brain Fog,Cognitive Dysfunction,R41.8
++cond_060,Memory Issues,Forgetfulness|Mild Cognitive Impairment,R41.3
++cond_061,ADHD Symptoms,Attention Deficit|Hyperactivity,F90
++cond_062,Restless Leg Syndrome,RLS|Willis-Ekbom Disease,G25.81
++cond_063,Fibromyalgia,Chronic Widespread Pain,M79.7
++cond_064,Chronic Pain,Persistent Pain,R52
++cond_065,Diabetic Neuropathy,Nerve Pain from Diabetes,E11.4
++cond_066,High Blood Sugar,Hyperglycemia|Pre-diabetes,R73
++cond_067,Low Blood Sugar,Hypoglycemia,E16.2
++cond_068,Thyroid Imbalance (Hypo),Hypothyroidism,E03
++cond_069,Thyroid Imbalance (Hyper),Hyperthyroidism,E05
++cond_070,Adrenal Fatigue,HPA Axis Dysfunction,E27.4
++cond_071,Anemia (Iron Deficiency),Low Iron|IDA,D50
++cond_072,Vitamin D Deficiency,Low Vitamin D,E55.9
++cond_073,Vitamin B12 Deficiency,Low B12,E53.8
++cond_074,Weight Management,Obesity|Overweight,E66
++cond_075,Appetite Loss,Anorexia,R63.0
++cond_076,Hangover,Veisalgia,T51
++cond_077,Nicotine Withdrawal,Smoking Cessation,F17.2
++cond_078,Immune Support,Weak Immunity|Frequent Illness,D84.9
++cond_079,Inflammation (Chronic),Systemic Inflammation,M79.3
++cond_080,Antioxidant Support,Oxidative Stress,Z71.3
++cond_081,Liver Support,Hepatic Function Support,K76.9
++cond_082,Kidney Support,Renal Function Support,N28.9
++cond_083,Cardiovascular Support,Heart Health,I51.9
++cond_084,Brain Health,Neuroprotection|Cognitive Support,G93.4
++cond_085,Bone Health,Osteoporosis Prevention,M81
++cond_086,Hair Loss,Alopecia,L64-L66
++cond_087,Nail Health,Brittle Nails,L60
++cond_088,Wound Healing,Tissue Repair,L89
++cond_089,Dental Health,Oral Hygiene Support,K00-K14
++cond_090,Bad Breath,Halitosis,R19.6
++cond_091,Body Odor,Bromhidrosis,L75.0
++cond_092,Yeast Infections,Candidiasis|Thrush,B37
++cond_093,Parasitic Infections,Intestinal Parasites,B82
++cond_094,Detoxification Support,Cleansing|Elimination Support,Z51.6
++cond_095,Heavy Metal Exposure,Metal Toxicity,T56
++cond_096,Radiation Exposure,Radiation Effects,W88-W90
++cond_097,Chemical Sensitivity,MCS|Environmental Illness,T78.4
++cond_098,Jet Lag,Time Zone Change Disorder,G47.2
++cond_099,Shift Work Sleep Disorder,Circadian Rhythm Disorder,G47.26
++cond_100,Performance Anxiety,Stage Fright,F40.2
++cond_101,General Wellness,Health Maintenance|Preventive Care,Z00-Z13
+diff --git a/content-template.md b/content-template.md
+new file mode 100644
+index 0000000..181a6b5
+--- /dev/null
++++ b/content-template.md
+@@ -0,0 +1,485 @@
++# Content Template — NaturoPath: 101
++
++## Overview
++
++This template provides the structure for creating consistent, high-quality entries for conditions and plants in the NaturoPath: 101 database. All entries must be reviewed and approved by the advisory board before publishing.
++
++---
++
++## CONDITION ENTRY TEMPLATE
++
++### Required Fields
++
++#### 1. Basic Information
++- **Condition ID**: `cond_XXX_condition_name` (e.g., `cond_001_common_cold`)
++- **Condition Name**: Official name (e.g., "Common Cold")
++- **Synonyms**: Array of alternative names, common terms, medical terms
++  - Example: ["Upper Respiratory Infection", "URI", "Head Cold"]
++- **ICD Codes**: ICD-10 codes for medical categorization
++  - Example: ["J00"]
++
++#### 2. Description
++- **Overview** (150-300 words):
++  - What is this condition?
++  - How common is it?
++  - What causes it?
++  - Typical duration
++  - General prognosis
++  - Write in accessible, plain language
++  - Avoid medical jargon where possible; define terms when necessary
++
++**Example**:
++```
++The common cold is a viral infection of the upper respiratory tract, 
++primarily affecting the nose and throat. It is one of the most frequent 
++illnesses, with adults experiencing 2-3 colds per year on average. While 
++uncomfortable, colds are generally self-limiting and resolve within 7-10 days.
++```
++
++#### 3. Symptoms
++- **Symptoms**: Array of common symptoms (6-10 items)
++  - List from most common to least common
++  - Use clear, patient-friendly language
++  - Be specific (not just "pain" but "throbbing headache")
++
++**Example**:
++```
++- Runny or stuffy nose
++- Sore throat
++- Cough
++- Sneezing
++- Mild headache
++- Low-grade fever (rare in adults)
++- Fatigue
++```
++
++#### 4. Red Flags (CRITICAL)
++- **Red Flags**: Array of warning signs requiring immediate medical care
++  - Be specific about thresholds (e.g., "fever above 101.3°F")
++  - Include duration qualifiers (e.g., "lasting more than 3 days")
++  - Highlight serious complications
++  - Mention vulnerable populations (infants, elderly, immunocompromised)
++
++**Example**:
++```
++- Fever above 101.3°F (38.5°C) lasting more than 3 days
++- Symptoms persisting beyond 10 days without improvement
++- Severe headache or facial pain (possible sinusitis)
++- Difficulty breathing or shortness of breath
++- Chest pain
++- Symptoms in infants under 3 months
++```
++
++#### 5. Recommended Plants
++- **Recommended Plants**: Array of plant recommendations (1-5 plants)
++
++For each plant:
++- **Plant ID**: Reference to plant entry
++- **Usage**: How the plant is used for this condition (1-2 sentences)
++- **Evidence Level**: Level of evidence for this specific use
++
++**Example**:
++```json
++{
++  "plantId": "plant_001_echinacea",
++  "usage": "Take at the first sign of cold symptoms. May reduce duration and severity when taken early.",
++  "evidenceLevel": "human_trial"
++}
++```
++
++#### 6. Evidence & Review
++- **Evidence Level**: Overall evidence level for herbal treatment of this condition
++  - Options: traditional, in_vitro, animal, human_trial, strong_clinical
++- **References**: Array of scientific references (minimum 2-5)
++  - Include systematic reviews and meta-analyses when available
++  - PubMed links preferred
++  - Include traditional sources where relevant
++- **Last Reviewed Date**: Date of last advisory board review (YYYY-MM-DD)
++- **Reviewed By**: Array of advisory board member IDs who approved this entry
++
++### Optional Fields
++- **Related Conditions**: Links to related conditions
++- **Prevention Tips**: Evidence-based prevention strategies
++- **Lifestyle Modifications**: Diet, exercise, stress management recommendations
++
++### Content Guidelines for Conditions
++
++1. **Tone**: Professional, compassionate, empowering
++2. **Reading Level**: Target 8th-grade reading level (use Hemingway Editor or similar)
++3. **Length**: Overview 150-300 words; symptoms 6-10 items; red flags 4-8 items
++4. **Citations**: Every factual claim should be supported by references or marked as "traditional use"
++5. **Disclaimers**: Never promise cure or treatment; position as complementary/informational
++6. **Updates**: Review annually or when new significant research published
++
++---
++
++## PLANT ENTRY TEMPLATE
++
++### Required Fields
++
++#### 1. Basic Information
++- **Plant ID**: `plant_XXX_common_name` (e.g., `plant_001_echinacea`)
++- **Scientific Name**: Full Latin binomial (e.g., "Echinacea purpurea")
++- **Common Names**: Array of common names in English (at least 2)
++  - Example: ["Purple Coneflower", "Echinacea"]
++- **Family**: Taxonomic family (e.g., "Asteraceae")
++- **Genus**: Genus name (e.g., "Echinacea")
++- **Species**: Species name (e.g., "purpurea")
++
++#### 2. Description
++- **Description** (200-400 words):
++  - Physical description of plant
++  - Native habitat and distribution
++  - Historical/traditional uses
++  - Current medicinal uses
++  - Cultural significance (if relevant)
++  - Write engagingly but scientifically
++
++**Example**:
++```
++Echinacea purpurea is a flowering plant native to North America, widely 
++recognized for its immune-supporting properties. The plant features distinctive 
++purple-pink petals surrounding a spiky central cone. Traditionally used by 
++Native American tribes for various ailments, echinacea is now one of the most 
++popular herbal supplements for immune health.
++```
++
++#### 3. Images
++- **Images**: Array of high-quality images (minimum 3-5)
++
++For each image:
++- **URL**: Full URL to image (hosted on CDN)
++- **Alt Text**: Descriptive alt text for accessibility
++- **Caption**: Brief caption
++- **Image Type**: whole_plant, leaf, flower, root, bark, seed, fruit, or habitat
++- **Thumbnail URL**: URL to thumbnail version
++- **Attribution**: Photographer/source credit
++- **License**: License type (e.g., "CC BY-SA 4.0")
++
++**Required Image Types**:
++- At least one whole_plant or habitat image
++- At least one image of the medicinal part (root, flower, etc.)
++- Close-up images showing identification features
++
++#### 4. Phytochemicals
++- **Phytochemicals**: Array of key active compounds (3-10 compounds)
++
++For each compound:
++- **Name**: Chemical name
++- **Chemical Class**: e.g., alkaloid, flavonoid, terpene, phenolic
++- **PubChem ID**: PubChem database ID (if available)
++- **CAS Number**: CAS registry number (if available)
++- **Proposed Mechanism**: How the compound is thought to work (1-2 sentences)
++- **Concentration**: Typical concentration in plant material
++
++**Focus on**:
++- Compounds with known or proposed medicinal activity
++- Well-studied constituents
++- Compounds used for standardization
++
++#### 5. Preparation Methods
++- **Preparation Methods**: Array of preparation methods (2-5 methods)
++
++For each method:
++- **Method**: tea, infusion, decoction, tincture, extract, poultice, topical, essential_oil, capsule, powder
++- **Instructions**: Step-by-step preparation instructions
++- **Dosage**: Typical dose range
++- **Frequency**: How often to take
++- **Duration**: How long to use (include maximum duration if applicable)
++- **Notes**: Important tips, best practices, storage
++
++**Example**:
++```json
++{
++  "method": "tincture",
++  "instructions": "Use 1:5 ratio of dried root to 40% alcohol. Macerate for 2-4 weeks, shaking daily.",
++  "dosage": "2-4 ml (40-80 drops)",
++  "frequency": "3 times daily",
++  "duration": "At first sign of cold, continue for 7-10 days maximum",
++  "notes": "Most commonly used preparation. Take at onset of symptoms for best results."
++}
++```
++
++**Include**:
++- Most effective/traditional preparation first
++- At least one simple home preparation (tea, infusion)
++- Standardized extract dosing when available
++
++#### 6. Contraindications (CRITICAL)
++- **Contraindications**: Array of contraindications (minimum 3-5)
++
++For each contraindication:
++- **Category**: pregnancy, lactation, children, autoimmune, anticoagulants, cyp_interaction, kidney_disease, liver_disease, surgery, other
++- **Severity**: mild, moderate, severe, contraindicated
++- **Description**: Clear explanation of the contraindication and risk
++- **References**: Supporting research
++
++**Example**:
++```json
++{
++  "category": "autoimmune",
++  "severity": "moderate",
++  "description": "May stimulate immune system and potentially worsen autoimmune conditions such as multiple sclerosis, lupus, rheumatoid arthritis, or others.",
++  "references": [...]
++}
++```
++
++**Required Categories to Address**:
++- Pregnancy (even if no known contraindication, state "limited data")
++- Lactation
++- Children (specify age groups)
++- Drug interactions (especially blood thinners, immunosuppressants)
++- CYP enzyme interactions (if known)
++
++#### 7. Harvesting Guidance
++- **Harvesting Guidance**: Object with cultivation information
++
++Fields:
++- **Part Used**: Array of plant parts used (e.g., ["root", "aerial parts"])
++- **Harvest Season**: When to harvest for optimal potency
++- **Sustainability Notes**: Wild harvesting concerns, cultivation recommendations
++- **Cultivation Difficulty**: easy, moderate, or difficult
++
++**Example**:
++```json
++{
++  "partUsed": ["root", "aerial parts", "flowers"],
++  "harvestSeason": "Roots: fall after 3-4 years growth. Aerial parts: during flowering (summer).",
++  "sustainabilityNotes": "Cultivate rather than wild-harvest. Plant is easy to grow and readily available. Wild populations should not be harvested.",
++  "cultivationDifficulty": "easy"
++}
++```
++
++#### 8. Evidence & Review
++- **Evidence Level**: Overall evidence level for medicinal use
++- **References**: Array of scientific references (minimum 3-10)
++  - Prioritize: systematic reviews, meta-analyses, RCTs, pharmacopeia entries
++  - Include traditional use references when relevant
++- **Last Reviewed Date**: Date of last advisory board review
++- **Reviewed By**: Advisory board member IDs
++
++### Optional Fields
++- **Synonyms**: Other scientific names or subspecies
++- **Traditional Uses**: Historical uses not covered in modern research
++- **Dosage Warnings**: Special precautions
++- **Storage Instructions**: How to store prepared remedies
++- **Quality Considerations**: How to identify quality products
++
++### Content Guidelines for Plants
++
++1. **Accuracy**: Verify all botanical information (scientific name, family, etc.)
++2. **Safety First**: Contraindications and warnings must be comprehensive
++3. **Evidence-Based**: Clearly distinguish between traditional use and scientific evidence
++4. **Practical**: Provide actionable preparation instructions
++5. **Sustainable**: Always address sustainability and ethical harvesting
++6. **Images**: High-quality, properly identified images with clear labels
++7. **Accessibility**: Write for general audience, define technical terms
++
++---
++
++## INTERACTION ENTRY TEMPLATE
++
++(For Premium Medicine Cabinet Feature)
++
++### Required Fields
++
++#### 1. Basic Information
++- **Interaction ID**: `int_XXX_plant_drug` (e.g., `int_001_ginkgo_aspirin`)
++- **Plant ID**: Reference to plant entry
++- **Drug Name**: Common name of medication
++- **Active Ingredient**: Primary active pharmaceutical ingredient
++- **RxNorm Code**: RxNorm concept code (if available)
++
++#### 2. Interaction Details
++- **Interaction Type**: additive, antagonistic, potentiation, cyp_inhibition, cyp_induction, absorption_interference, unknown
++- **Severity**: minor, moderate, major, contraindicated
++- **Mechanism**: How the interaction occurs (pharmacokinetic, pharmacodynamic)
++- **Clinical Significance**: Real-world importance of the interaction
++- **Recommendation**: Clear guidance on what to do
++
++**Example**:
++```json
++{
++  "id": "int_001_ginkgo_aspirin",
++  "plantId": "plant_004_ginkgo",
++  "drugName": "Aspirin",
++  "activeIngredient": "Acetylsalicylic acid",
++  "rxNormCode": "1191",
++  "interactionType": "additive",
++  "severity": "major",
++  "mechanism": "Both ginkgo and aspirin have antiplatelet effects. Combined use may increase bleeding risk.",
++  "clinicalSignificance": "Case reports of bleeding events when ginkgo combined with antiplatelet drugs.",
++  "recommendation": "Consult healthcare provider before combining. Monitor for unusual bleeding or bruising. Discontinue ginkgo 2 weeks before surgery."
++}
++```
++
++#### 3. References
++- **References**: Clinical evidence for the interaction (minimum 2-3)
++  - Case reports
++  - Clinical studies
++  - Pharmacology references
++
++---
++
++## EDITORIAL WORKFLOW
++
++### Content Creation Process
++
++1. **Research Phase**:
++   - Literature review (PubMed, Cochrane, pharmacopeia)
++   - Traditional use research (ethnobotany sources)
++   - Safety data compilation (contraindications, interactions)
++
++2. **Writing Phase**:
++   - Use this template
++   - Write for target audience (educated general public)
++   - Include all required fields
++   - Cite all sources
++
++3. **Internal Review**:
++   - Fact-checking
++   - Verify scientific names
++   - Check image attributions and licenses
++   - Ensure disclaimers present
++   - Readability check
++
++4. **Advisory Board Review**:
++   - Submit to at least 2 advisory board members (1 herbalist + 1 clinician minimum)
++   - Board reviews for:
++     - Accuracy
++     - Safety
++     - Appropriate disclaimers
++     - Evidence level appropriateness
++   - Board suggests revisions if needed
++
++5. **Revision Phase**:
++   - Incorporate board feedback
++   - Verify changes
++   - Resubmit if major changes
++
++6. **Approval**:
++   - Board members approve entry
++   - Record approval date and reviewers
++   - Entry ready for publication
++
++7. **Publishing**:
++   - Add to database
++   - Generate search indices
++   - Create content bundle
++   - Deploy update
++
++### Quality Checklist
++
++Before submitting for board review, verify:
++
++**Conditions:**
++- [ ] All required fields complete
++- [ ] Overview 150-300 words, readable
++- [ ] Red flags comprehensive and specific
++- [ ] At least 1 recommended plant with usage
++- [ ] Evidence level appropriate
++- [ ] Minimum 2 quality references
++- [ ] No medical advice (informational only)
++- [ ] Disclaimer language appropriate
++
++**Plants:**
++- [ ] Scientific name verified (USDA Plants Database or The Plant List)
++- [ ] At least 3 high-quality images with proper attribution
++- [ ] Minimum 3 phytochemicals with mechanisms
++- [ ] At least 2 preparation methods with complete instructions
++- [ ] Comprehensive contraindications (pregnancy, lactation, children, interactions)
++- [ ] Sustainability addressed
++- [ ] Evidence level appropriate
++- [ ] Minimum 3 quality references
++- [ ] No cure claims or medical advice
++
++**Interactions:**
++- [ ] Severity rating justified by evidence
++- [ ] Mechanism clearly explained
++- [ ] Practical recommendation provided
++- [ ] Minimum 2 references
++
++### Evidence Level Guidelines
++
++**Strong Clinical**:
++- Multiple high-quality RCTs with consistent results
++- Systematic reviews/meta-analyses showing efficacy
++- Included in medical guidelines or pharmacopeia
++
++**Human Trial**:
++- At least one well-designed RCT
++- Clinical studies showing efficacy
++- May have some conflicting evidence
++
++**Animal**:
++- Animal studies showing efficacy
++- May have preliminary human data
++- Mechanism supported by research
++
++**In Vitro**:
++- Test tube/cell culture studies only
++- Mechanism proposed but not validated in vivo
++
++**Traditional**:
++- Historical use documented
++- Minimal or no modern scientific validation
++- Based on traditional knowledge systems
++
++### Style Guide
++
++**Tone**: Professional, empowering, compassionate, evidence-based
++
++**Voice**: Second person ("you") when addressing user, third person for descriptions
++
++**Formatting**:
++- Use sentence case for headings
++- Use bold for emphasis sparingly
++- Use bullet points for lists
++- Write short paragraphs (3-4 sentences max)
++
++**Terminology**:
++- Use "may" not "will" for effects (e.g., "may reduce symptoms")
++- Use "herb" or "plant" not "medication" or "treatment"
++- Use "evidence suggests" not "proven to"
++- Always include qualifiers: "Some studies suggest...", "Traditionally used for..."
++
++**Disclaimers to Include**:
++- "This information is for educational purposes only"
++- "Consult a healthcare provider before use"
++- "Not intended to diagnose, treat, cure, or prevent any disease"
++
++### Common Pitfalls to Avoid
++
++1. ❌ Making cure or treatment claims
++2. ❌ Recommending herbs for serious conditions without medical oversight
++3. ❌ Incomplete contraindication information
++4. ❌ Unsupported dosage recommendations
++5. ❌ Using scientific names incorrectly
++6. ❌ Inadequate source citations
++7. ❌ Overstating evidence strength
++8. ❌ Ignoring sustainability concerns
++9. ❌ Missing red flag warnings
++10. ❌ Inadequate drug interaction information
++
++### Version Control
++
++- **Version Number**: Increment for each update (e.g., 1.0, 1.1, 2.0)
++- **Change Log**: Document all changes with dates
++- **Re-review**: Major changes require full advisory board re-review
++- **Annual Review**: All entries reviewed annually for updates
++
++---
++
++## Example Entry Files
++
++See `sample-entries.json` for complete examples of:
++- Common Cold (condition)
++- Insomnia (condition)
++- Mild Anxiety (condition)
++- Echinacea purpurea (plant)
++- Valeriana officinalis (plant)
++- Piper methysticum / Kava (plant)
++
++---
++
++**Following this template ensures consistency, safety, and quality across all NaturoPath: 101 content.**
+diff --git a/data-schema.json b/data-schema.json
+new file mode 100644
+index 0000000..07e70b0
+--- /dev/null
++++ b/data-schema.json
+@@ -0,0 +1,368 @@
++{
++  "$schema": "http://json-schema.org/draft-07/schema#",
++  "title": "NaturoPath Data Schema",
++  "version": "1.0.0",
++  "definitions": {
++    "evidenceLevel": {
++      "type": "string",
++      "enum": [
++        "traditional",
++        "in_vitro",
++        "animal",
++        "human_trial",
++        "strong_clinical"
++      ],
++      "description": "Level of scientific evidence supporting the claim"
++    },
++    "reference": {
++      "type": "object",
++      "properties": {
++        "type": {
++          "type": "string",
++          "enum": ["pubmed", "pharmacopeia", "traditional", "clinical_trial", "review", "other"]
++        },
++        "id": {
++          "type": "string",
++          "description": "PubMed ID, DOI, or other identifier"
++        },
++        "title": {
++          "type": "string"
++        },
++        "authors": {
++          "type": "string"
++        },
++        "year": {
++          "type": "integer"
++        },
++        "url": {
++          "type": "string",
++          "format": "uri"
++        }
++      },
++      "required": ["type", "title"]
++    },
++    "phytochemical": {
++      "type": "object",
++      "properties": {
++        "name": {
++          "type": "string"
++        },
++        "chemicalClass": {
++          "type": "string",
++          "description": "e.g., alkaloid, flavonoid, terpene, phenolic"
++        },
++        "pubchemId": {
++          "type": "string"
++        },
++        "casNumber": {
++          "type": "string"
++        },
++        "proposedMechanism": {
++          "type": "string"
++        },
++        "concentration": {
++          "type": "string",
++          "description": "Typical concentration in plant material"
++        }
++      },
++      "required": ["name"]
++    },
++    "preparationMethod": {
++      "type": "object",
++      "properties": {
++        "method": {
++          "type": "string",
++          "enum": ["tea", "infusion", "decoction", "tincture", "extract", "poultice", "topical", "essential_oil", "capsule", "powder"]
++        },
++        "instructions": {
++          "type": "string"
++        },
++        "dosage": {
++          "type": "string"
++        },
++        "frequency": {
++          "type": "string"
++        },
++        "duration": {
++          "type": "string"
++        },
++        "notes": {
++          "type": "string"
++        }
++      },
++      "required": ["method", "instructions"]
++    },
++    "contraindication": {
++      "type": "object",
++      "properties": {
++        "category": {
++          "type": "string",
++          "enum": ["pregnancy", "lactation", "children", "autoimmune", "anticoagulants", "cyp_interaction", "kidney_disease", "liver_disease", "surgery", "other"]
++        },
++        "severity": {
++          "type": "string",
++          "enum": ["mild", "moderate", "severe", "contraindicated"]
++        },
++        "description": {
++          "type": "string"
++        },
++        "references": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/reference"
++          }
++        }
++      },
++      "required": ["category", "severity", "description"]
++    },
++    "image": {
++      "type": "object",
++      "properties": {
++        "url": {
++          "type": "string",
++          "format": "uri"
++        },
++        "altText": {
++          "type": "string"
++        },
++        "caption": {
++          "type": "string"
++        },
++        "imageType": {
++          "type": "string",
++          "enum": ["whole_plant", "leaf", "flower", "root", "bark", "seed", "fruit", "habitat"]
++        },
++        "thumbnailUrl": {
++          "type": "string",
++          "format": "uri"
++        },
++        "attribution": {
++          "type": "string"
++        },
++        "license": {
++          "type": "string"
++        }
++      },
++      "required": ["url", "altText", "imageType"]
++    },
++    "plant": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "string"
++        },
++        "scientificName": {
++          "type": "string"
++        },
++        "commonNames": {
++          "type": "array",
++          "items": {
++            "type": "string"
++          }
++        },
++        "family": {
++          "type": "string",
++          "description": "Taxonomic family"
++        },
++        "genus": {
++          "type": "string"
++        },
++        "species": {
++          "type": "string"
++        },
++        "description": {
++          "type": "string"
++        },
++        "images": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/image"
++          }
++        },
++        "phytochemicals": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/phytochemical"
++          }
++        },
++        "preparationMethods": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/preparationMethod"
++          }
++        },
++        "contraindications": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/contraindication"
++          }
++        },
++        "harvestingGuidance": {
++          "type": "object",
++          "properties": {
++            "partUsed": {
++              "type": "array",
++              "items": {
++                "type": "string"
++              }
++            },
++            "harvestSeason": {
++              "type": "string"
++            },
++            "sustainabilityNotes": {
++              "type": "string"
++            },
++            "cultivationDifficulty": {
++              "type": "string",
++              "enum": ["easy", "moderate", "difficult"]
++            }
++          }
++        },
++        "evidenceLevel": {
++          "$ref": "#/definitions/evidenceLevel"
++        },
++        "references": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/reference"
++          }
++        },
++        "lastReviewedDate": {
++          "type": "string",
++          "format": "date"
++        },
++        "reviewedBy": {
++          "type": "array",
++          "items": {
++            "type": "string"
++          },
++          "description": "Advisory board member IDs"
++        }
++      },
++      "required": ["id", "scientificName", "commonNames", "description", "evidenceLevel"]
++    },
++    "condition": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "string"
++        },
++        "name": {
++          "type": "string"
++        },
++        "synonyms": {
++          "type": "array",
++          "items": {
++            "type": "string"
++          }
++        },
++        "icdCodes": {
++          "type": "array",
++          "items": {
++            "type": "string"
++          },
++          "description": "ICD-10 or similar codes for searchability"
++        },
++        "overview": {
++          "type": "string"
++        },
++        "symptoms": {
++          "type": "array",
++          "items": {
++            "type": "string"
++          }
++        },
++        "redFlags": {
++          "type": "array",
++          "items": {
++            "type": "string"
++          },
++          "description": "When to seek immediate medical care"
++        },
++        "recommendedPlants": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "plantId": {
++                "type": "string"
++              },
++              "usage": {
++                "type": "string"
++              },
++              "evidenceLevel": {
++                "$ref": "#/definitions/evidenceLevel"
++              }
++            },
++            "required": ["plantId", "usage"]
++          }
++        },
++        "evidenceLevel": {
++          "$ref": "#/definitions/evidenceLevel"
++        },
++        "references": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/reference"
++          }
++        },
++        "lastReviewedDate": {
++          "type": "string",
++          "format": "date"
++        },
++        "reviewedBy": {
++          "type": "array",
++          "items": {
++            "type": "string"
++          }
++        }
++      },
++      "required": ["id", "name", "overview", "symptoms", "redFlags", "recommendedPlants", "evidenceLevel"]
++    },
++    "interaction": {
++      "type": "object",
++      "description": "Drug-herb interaction data for Medicine Cabinet feature",
++      "properties": {
++        "id": {
++          "type": "string"
++        },
++        "plantId": {
++          "type": "string"
++        },
++        "drugName": {
++          "type": "string"
++        },
++        "activeIngredient": {
++          "type": "string"
++        },
++        "rxNormCode": {
++          "type": "string"
++        },
++        "interactionType": {
++          "type": "string",
++          "enum": ["additive", "antagonistic", "potentiation", "cyp_inhibition", "cyp_induction", "absorption_interference", "unknown"]
++        },
++        "severity": {
++          "type": "string",
++          "enum": ["minor", "moderate", "major", "contraindicated"]
++        },
++        "mechanism": {
++          "type": "string"
++        },
++        "clinicalSignificance": {
++          "type": "string"
++        },
++        "recommendation": {
++          "type": "string"
++        },
++        "references": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/reference"
++          }
++        }
++      },
++      "required": ["id", "plantId", "drugName", "severity", "recommendation"]
++    }
++  }
++}
+diff --git a/disclaimer.md b/disclaimer.md
+new file mode 100644
+index 0000000..cf3331b
+--- /dev/null
++++ b/disclaimer.md
+@@ -0,0 +1,141 @@
++# NaturoPath: 101 Important Legal & Medical Disclaimer
++
++## General Information Only
++
++**NaturoPath: 101** (the "App") is designed for **informational and educational purposes only**. The content provided in this App, including but not limited to text, graphics, images, plant descriptions, phytochemical information, preparation methods, dosage suggestions, and any other material, **does not constitute medical advice, diagnosis, or treatment**.
++
++## Not a Substitute for Professional Medical Care
++
++The information in this App **is not intended to replace consultation with a qualified healthcare provider**. Always seek the advice of your physician, pharmacist, herbalist, or other qualified health provider with any questions you may have regarding:
++
++- A medical condition
++- Current medications or supplements
++- Potential herb-drug interactions
++- Starting, stopping, or changing any treatment or medication regimen
++
++**Never disregard professional medical advice or delay seeking it because of something you have read in this App.**
++
++## Emergency Situations
++
++If you are experiencing a medical emergency, **call emergency services immediately** (911 in the United States, or your local emergency number). Do not rely on this App for guidance during medical emergencies.
++
++The App includes "red flag" warnings on condition pages to help users identify symptoms that require immediate medical attention. These warnings are not exhaustive, and users should use their judgment and seek medical care whenever concerned about their health.
++
++## No Healthcare Provider Relationship
++
++Use of this App does not create a healthcare provider-patient relationship between you and:
++- The App developers
++- Content contributors
++- Advisory board members
++- Any affiliated individuals or organizations
++
++The App and its content providers are not responsible for any decisions you make based on information provided in the App.
++
++## Herbal Medicine Considerations
++
++### Individual Variation
++Herbal medicines can affect individuals differently based on:
++- Age, weight, and overall health status
++- Genetic factors affecting metabolism
++- Current medications and supplements
++- Pre-existing medical conditions
++- Pregnancy or breastfeeding status
++- Allergies and sensitivities
++
++### Quality and Sourcing
++The efficacy and safety of herbal products depend on:
++- Plant species identification
++- Growing and harvesting conditions
++- Processing and storage methods
++- Presence of adulterants or contaminants
++- Standardization of active compounds
++
++The App does not endorse any specific herbal product manufacturer or supplier. Users are responsible for ensuring the quality and authenticity of any herbal products they purchase.
++
++### Regulation Status
++**Important**: In many countries, including the United States, herbal supplements are not evaluated by regulatory agencies (such as the FDA) in the same way as pharmaceutical drugs. Claims made about herbal products have not been evaluated by the FDA, and these products are not intended to diagnose, treat, cure, or prevent any disease.
++
++## Drug-Herb Interactions
++
++The Medicine Cabinet feature of this App provides information about potential interactions between conventional medications and herbal remedies. However:
++
++- The interaction database is **not comprehensive** and may not include all possible interactions
++- Interaction severity ratings are **guidelines only** and individual responses may vary
++- New interactions are continually being discovered through research
++- **Always consult your healthcare provider or pharmacist** before combining herbs with prescription or over-the-counter medications
++
++## Contraindications and Safety Warnings
++
++Each plant and condition page includes contraindication information based on available evidence. However:
++
++- Safety data for many herbs is **incomplete**, especially regarding:
++  - Long-term use
++  - Use during pregnancy and lactation
++  - Use in children
++  - Use in individuals with specific medical conditions
++- Absence of a listed contraindication **does not guarantee safety**
++- If you have any medical condition or take any medications, **consult a healthcare provider** before using herbal remedies
++
++## Evidence Levels
++
++Content in this App is tagged with evidence levels (traditional use, in vitro, animal studies, human trials, strong clinical evidence) to help users understand the research basis for each remedy. However:
++
++- **"Traditional use"** indicates historical use but may lack modern scientific validation
++- Studies may have **limitations** in design, sample size, or quality
++- Research is **ongoing**, and new evidence may change recommendations
++- Evidence level **does not guarantee effectiveness or safety** for any individual
++
++## Content Accuracy and Updates
++
++While we strive to provide accurate, up-to-date information based on current research and traditional knowledge:
++
++- Information may become **outdated** as new research emerges
++- Errors or omissions may occur despite careful review
++- Content is reviewed by our advisory board, but individual entries may be updated at different times
++- Users should verify critical information through additional sources and consult healthcare professionals
++
++## User Responsibility
++
++By using this App, you acknowledge and agree that:
++
++1. You are responsible for your own health decisions
++2. You will consult qualified healthcare providers before:
++   - Starting any herbal remedy
++   - Combining herbs with medications
++   - Stopping or changing prescribed treatments
++   - Using herbs if you are pregnant, breastfeeding, or treating a child
++3. You will inform all your healthcare providers about any herbs or supplements you use
++4. You understand the limitations and intended use of this App
++
++## Limitation of Liability
++
++To the fullest extent permitted by law, the developers, content creators, advisory board members, and all associated parties of NaturoPath: 101 **shall not be liable** for any direct, indirect, incidental, consequential, or punitive damages arising from:
++
++- Use or inability to use the App
++- Reliance on information provided in the App
++- Errors or omissions in the content
++- Any health outcomes resulting from use of information in the App
++
++## Regulatory Compliance
++
++This App complies with applicable laws and regulations regarding health information applications. However:
++
++- Laws vary by jurisdiction
++- Users are responsible for ensuring their use of the App complies with local laws
++- The App is not intended for use where prohibited by law
++
++## Changes to This Disclaimer
++
++This disclaimer may be updated periodically. Continued use of the App after changes constitutes acceptance of the updated disclaimer. Users are encouraged to review this disclaimer regularly.
++
++## Contact Information
++
++For questions about this disclaimer or the App's content, please contact:
++
++[Contact information to be added]
++
++---
++
++**Last Updated**: January 2024
++
++**By using NaturoPath: 101, you acknowledge that you have read, understood, and agree to this disclaimer.**
+diff --git a/flutter-starter/README.md b/flutter-starter/README.md
+new file mode 100644
+index 0000000..e15def4
+--- /dev/null
++++ b/flutter-starter/README.md
+@@ -0,0 +1,426 @@
++# NaturoPath: 101 - Flutter Starter
++
++This is the Flutter starter project for NaturoPath: 101, a cross-platform application providing evidence-based information about herbal remedies and natural health.
++
++## Overview
++
++NaturoPath: 101 is built with Flutter to provide a consistent experience across:
++- iOS (iPhone, iPad)
++- Android (phones, tablets)
++- Web (Progressive Web App)
++- Desktop (macOS, Windows, Linux)
++
++## Project Structure
++
++```
++flutter-starter/
++├── lib/
++│   ├── main.dart                 # App entry point
++│   ├── models/                   # Data models
++│   │   ├── condition.dart        # Condition model
++│   │   └── plant.dart            # Plant model
++│   ├── services/                 # Business logic services
++│   │   └── medicine_cabinet_service.dart
++│   └── screens/                  # UI screens
++│       └── home_screen.dart      # Home screen
++├── pubspec.yaml                  # Dependencies
++└── README.md                     # This file
++```
++
++## Getting Started
++
++### Prerequisites
++
++1. **Flutter SDK** (3.0.0 or higher)
++   - Install from: https://flutter.dev/docs/get-started/install
++   - Verify installation: `flutter doctor`
++
++2. **IDE** (choose one):
++   - Visual Studio Code with Flutter extension
++   - Android Studio with Flutter plugin
++   - IntelliJ IDEA with Flutter plugin
++
++3. **Platform-specific requirements**:
++   - **iOS**: Xcode 14+ (macOS only)
++   - **Android**: Android Studio, Android SDK
++   - **Web**: Chrome browser
++   - **Desktop**: Platform-specific toolchains (see Flutter docs)
++
++### Installation
++
++1. **Clone the repository** (if not already done):
++   ```bash
++   git clone https://github.com/SmashBox20/NaturoPath101.git
++   cd NaturoPath101/flutter-starter
++   ```
++
++2. **Install dependencies**:
++   ```bash
++   flutter pub get
++   ```
++
++3. **Generate model files** (for JSON serialization):
++   ```bash
++   flutter pub run build_runner build --delete-conflicting-outputs
++   ```
++
++4. **Run the app**:
++   ```bash
++   # Run on connected device/emulator
++   flutter run
++   
++   # Or specify platform
++   flutter run -d chrome        # Web
++   flutter run -d macos         # macOS
++   flutter run -d windows       # Windows
++   ```
++
++## Key Features Implemented
++
++### ✅ Current Features
++
++1. **Basic App Structure**
++   - Material Design 3 theme with custom color palette
++   - Bottom navigation bar
++   - Home screen with search
++
++2. **Data Models**
++   - `Condition`: Health condition with symptoms, red flags, recommended plants
++   - `Plant`: Medicinal plant with phytochemicals, preparation methods, contraindications
++   - JSON serialization ready (requires code generation)
++
++3. **Medicine Cabinet Service** (Premium)
++   - Encrypted local storage using `flutter_secure_storage`
++   - Medication management (add, update, delete)
++   - Interaction checking (stub - needs API implementation)
++   - Export/import functionality
++   - Cloud sync consent management
++
++4. **UI Components**
++   - Search bar with debouncing
++   - Disclaimer banner
++   - Quick link categories
++   - Featured content cards
++   - Premium feature gate
++
++### 🚧 To Be Implemented
++
++1. **Content Management**
++   - Local SQLite database for offline content
++   - Content service for loading conditions and plants
++   - Search functionality (fuzzy search, synonyms)
++   - Content filtering by evidence level, contraindications
++
++2. **Additional Screens**
++   - Browse/Categories screen
++   - Condition detail screen
++   - Plant detail screen
++   - Search results screen
++   - Medicine Cabinet screen
++   - Settings/Profile screen
++   - Subscription/Paywall screen
++
++3. **Backend Integration**
++   - API service for content updates
++   - Authentication (email/password, OAuth)
++   - Subscription validation (Apple IAP, Google Play Billing)
++   - Interaction checking API
++
++4. **Offline Support**
++   - Content bundle downloads
++   - Offline-first architecture
++   - Background sync
++
++5. **Additional Features**
++   - Bookmarks/Favorites
++   - Recently viewed history
++   - Share functionality
++   - Image caching and optimization
++   - Push notifications for content updates
++
++## Dependencies
++
++### Core Dependencies
++
++- **flutter**: Framework
++- **provider**: State management
++- **shared_preferences**: Simple key-value storage
++- **sqflite**: Local SQLite database
++- **path_provider**: File system paths
++- **flutter_secure_storage**: Encrypted storage for sensitive data
++- **encrypt**: Encryption utilities
++- **http** / **dio**: HTTP clients for API calls
++- **json_annotation** / **json_serializable**: JSON serialization
++- **cached_network_image**: Image caching
++- **url_launcher**: Open URLs in browser
++- **intl**: Internationalization
++
++See `pubspec.yaml` for complete list with versions.
++
++## Architecture
++
++### State Management
++
++Currently uses **Provider** for state management. Can be replaced with:
++- Riverpod (recommended for large apps)
++- BLoC
++- GetX
++
++### Data Flow
++
++```
++UI (Widgets)
++    ↓
++Providers/Controllers
++    ↓
++Services (API, Database)
++    ↓
++Models (Data classes)
++```
++
++### Security
++
++#### Medicine Cabinet Data
++- Stored using `flutter_secure_storage`
++- Encrypted at rest (AES-256)
++- Local-only by default
++- Cloud sync requires explicit user consent
++
++#### Best Practices
++- Never log sensitive health data
++- Use HTTPS for all API calls
++- Validate all user input
++- Follow platform security guidelines
++
++## Code Generation
++
++This project uses code generation for JSON serialization. After modifying model files:
++
++```bash
++# One-time build
++flutter pub run build_runner build --delete-conflicting-outputs
++
++# Watch mode (rebuilds automatically)
++flutter pub run build_runner watch
++```
++
++Generated files (`*.g.dart`) are git-ignored and must be regenerated after pulling changes.
++
++## Testing
++
++### Run Tests
++
++```bash
++# All tests
++flutter test
++
++# Specific test file
++flutter test test/models/condition_test.dart
++
++# With coverage
++flutter test --coverage
++```
++
++### Test Structure
++
++```
++test/
++├── models/
++├── services/
++├── screens/
++└── widgets/
++```
++
++(Tests to be added)
++
++## Building for Production
++
++### iOS
++
++```bash
++flutter build ios --release
++# Then open ios/Runner.xcworkspace in Xcode and archive
++```
++
++Requirements:
++- Apple Developer account ($99/year)
++- Provisioning profiles and certificates
++- App Store listing prepared
++
++### Android
++
++```bash
++flutter build appbundle --release
++# Or for APK:
++flutter build apk --release
++```
++
++Requirements:
++- Google Play Developer account ($25 one-time)
++- Signing key configured
++- Google Play listing prepared
++
++### Web
++
++```bash
++flutter build web --release
++```
++
++Deploy to:
++- Firebase Hosting
++- Netlify
++- Vercel
++- Any static hosting service
++
++### Desktop
++
++```bash
++# macOS
++flutter build macos --release
++
++# Windows
++flutter build windows --release
++
++# Linux
++flutter build linux --release
++```
++
++## Configuration
++
++### Environment Variables
++
++Create `.env` files for different environments:
++
++```
++# .env.development
++API_URL=http://localhost:3000
++API_KEY=dev_key_12345
++
++# .env.production
++API_URL=https://api.naturopath101.com
++API_KEY=prod_key_xxxxx
++```
++
++Use `flutter_dotenv` package to load these.
++
++### App Configuration
++
++Edit `pubspec.yaml` to customize:
++- App name
++- App version
++- Dependencies
++- Assets (images, fonts, data files)
++
++## Styling & Theming
++
++### Color Palette
++
++Defined in `main.dart`:
++- **Primary**: #2D7A3E (green)
++- **Secondary**: #D4A855 (gold)
++- **Background**: #FAFAF8 (warm white)
++- **Text**: #2C3E50 (dark gray)
++
++### Typography
++
++- **Headings**: Merriweather (serif) - to be added
++- **Body**: Inter or Open Sans (sans-serif) - to be added
++
++To add custom fonts:
++1. Add font files to `fonts/` directory
++2. Update `pubspec.yaml` fonts section
++3. Rebuild app
++
++## Accessibility
++
++Ensure accessibility compliance:
++- Semantic labels for screen readers
++- Sufficient color contrast (WCAG AA)
++- Tap targets minimum 44x44 points
++- Keyboard navigation support (web/desktop)
++- Text scaling support
++
++Use Flutter's accessibility tools:
++```bash
++flutter run --debug-accessibility
++```
++
++## Performance Optimization
++
++### Best Practices
++- Use `const` constructors where possible
++- Implement lazy loading for lists
++- Cache images with `cached_network_image`
++- Minimize widget rebuilds with `Provider.of(listen: false)`
++- Use `ListView.builder` for long lists
++- Profile with DevTools before release
++
++### Image Optimization
++- Use WebP format for smaller file sizes
++- Provide multiple resolutions for different screen densities
++- Lazy load images outside viewport
++
++## Troubleshooting
++
++### Common Issues
++
++**1. Build runner fails:**
++```bash
++flutter clean
++flutter pub get
++flutter pub run build_runner build --delete-conflicting-outputs
++```
++
++**2. iOS build fails:**
++- Check Xcode version (14+ required)
++- Run `pod install` in `ios/` directory
++- Clean build: `flutter clean && cd ios && pod deintegrate && pod install`
++
++**3. Android build fails:**
++- Check Android SDK is installed
++- Update Gradle: modify `android/build.gradle`
++- Increase heap size in `android/gradle.properties`
++
++**4. Secure storage issues on Android:**
++- Ensure min SDK version is 18+
++- Check AndroidManifest.xml permissions
++
++## Resources
++
++### Flutter Documentation
++- Flutter docs: https://flutter.dev/docs
++- Dart docs: https://dart.dev/guides
++- Cookbook: https://flutter.dev/docs/cookbook
++
++### Packages
++- pub.dev: https://pub.dev
++- Provider: https://pub.dev/packages/provider
++- Flutter Secure Storage: https://pub.dev/packages/flutter_secure_storage
++
++### Learning
++- Flutter YouTube channel
++- Flutter Community (Medium)
++- r/FlutterDev (Reddit)
++
++## Contributing
++
++1. Create a feature branch: `git checkout -b feature/my-feature`
++2. Make changes and test thoroughly
++3. Run linter: `flutter analyze`
++4. Format code: `flutter format .`
++5. Commit with clear message
++6. Push and create pull request
++
++## License
++
++[To be determined]
++
++## Contact
++
++For questions or issues:
++- GitHub Issues: [Create an issue](https://github.com/SmashBox20/NaturoPath101/issues)
++- Email: [To be added]
++
++---
++
++**Note**: This is a starter template. Many features are stubs and require implementation. Refer to `product-requirements.md` for complete feature specifications.
+diff --git a/flutter-starter/lib/main.dart b/flutter-starter/lib/main.dart
+new file mode 100644
+index 0000000..bb9f3cf
+--- /dev/null
++++ b/flutter-starter/lib/main.dart
+@@ -0,0 +1,111 @@
++import 'package:flutter/material.dart';
++import 'package:provider/provider.dart';
++import 'screens/home_screen.dart';
++
++void main() {
++  runApp(const NaturoPathApp());
++}
++
++class NaturoPathApp extends StatelessWidget {
++  const NaturoPathApp({super.key});
++
++  @override
++  Widget build(BuildContext context) {
++    return MultiProvider(
++      providers: [
++        // Add providers here as needed
++        // ChangeNotifierProvider(create: (_) => ContentProvider()),
++        // ChangeNotifierProvider(create: (_) => MedicineCabinetProvider()),
++      ],
++      child: MaterialApp(
++        title: 'NaturoPath: 101',
++        theme: ThemeData(
++          // Primary color - natural green
++          primarySwatch: MaterialColor(
++            0xFF2D7A3E,
++            const <int, Color>{
++              50: Color(0xFFE6F2E9),
++              100: Color(0xFFC0DFC8),
++              200: Color(0xFF96CAA3),
++              300: Color(0xFF6CB57E),
++              400: Color(0xFF4DA562),
++              500: Color(0xFF2D7A3E),
++              600: Color(0xFF287238),
++              700: Color(0xFF226730),
++              800: Color(0xFF1C5D28),
++              900: Color(0xFF114A1B),
++            },
++          ),
++          primaryColor: const Color(0xFF2D7A3E),
++          
++          // Accent color - gold
++          colorScheme: ColorScheme.fromSeed(
++            seedColor: const Color(0xFF2D7A3E),
++            secondary: const Color(0xFFD4A855),
++          ),
++          
++          // Background colors
++          scaffoldBackgroundColor: const Color(0xFFFAFAF8),
++          
++          // Typography
++          textTheme: const TextTheme(
++            displayLarge: TextStyle(
++              fontSize: 32,
++              fontWeight: FontWeight.bold,
++              color: Color(0xFF2C3E50),
++            ),
++            displayMedium: TextStyle(
++              fontSize: 24,
++              fontWeight: FontWeight.bold,
++              color: Color(0xFF2C3E50),
++            ),
++            displaySmall: TextStyle(
++              fontSize: 20,
++              fontWeight: FontWeight.w600,
++              color: Color(0xFF2C3E50),
++            ),
++            bodyLarge: TextStyle(
++              fontSize: 16,
++              color: Color(0xFF2C3E50),
++            ),
++            bodyMedium: TextStyle(
++              fontSize: 14,
++              color: Color(0xFF7F8C8D),
++            ),
++          ),
++          
++          // App Bar theme
++          appBarTheme: const AppBarTheme(
++            backgroundColor: Color(0xFF2D7A3E),
++            foregroundColor: Colors.white,
++            elevation: 0,
++          ),
++          
++          // Card theme
++          cardTheme: CardTheme(
++            elevation: 2,
++            shape: RoundedRectangleBorder(
++              borderRadius: BorderRadius.circular(12),
++            ),
++          ),
++          
++          // Button themes
++          elevatedButtonTheme: ElevatedButtonThemeData(
++            style: ElevatedButton.styleFrom(
++              backgroundColor: const Color(0xFF2D7A3E),
++              foregroundColor: Colors.white,
++              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
++              shape: RoundedRectangleBorder(
++                borderRadius: BorderRadius.circular(8),
++              ),
++            ),
++          ),
++          
++          useMaterial3: true,
++        ),
++        home: const HomeScreen(),
++        debugShowCheckedModeBanner: false,
++      ),
++    );
++  }
++}
+diff --git a/flutter-starter/lib/models/condition.dart b/flutter-starter/lib/models/condition.dart
+new file mode 100644
+index 0000000..264e5ec
+--- /dev/null
++++ b/flutter-starter/lib/models/condition.dart
+@@ -0,0 +1,138 @@
++import 'package:json_annotation/json_annotation.dart';
++
++part 'condition.g.dart';
++
++/// Evidence level for scientific validation
++enum EvidenceLevel {
++  @JsonValue('traditional')
++  traditional,
++  @JsonValue('in_vitro')
++  inVitro,
++  @JsonValue('animal')
++  animal,
++  @JsonValue('human_trial')
++  humanTrial,
++  @JsonValue('strong_clinical')
++  strongClinical,
++}
++
++/// Reference to scientific literature
++@JsonSerializable()
++class Reference {
++  final String type;
++  final String? id;
++  final String title;
++  final String? authors;
++  final int? year;
++  final String? url;
++
++  Reference({
++    required this.type,
++    this.id,
++    required this.title,
++    this.authors,
++    this.year,
++    this.url,
++  });
++
++  factory Reference.fromJson(Map<String, dynamic> json) =>
++      _$ReferenceFromJson(json);
++  Map<String, dynamic> toJson() => _$ReferenceToJson(this);
++}
++
++/// Plant recommendation for a condition
++@JsonSerializable()
++class RecommendedPlant {
++  final String plantId;
++  final String usage;
++  final EvidenceLevel? evidenceLevel;
++
++  RecommendedPlant({
++    required this.plantId,
++    required this.usage,
++    this.evidenceLevel,
++  });
++
++  factory RecommendedPlant.fromJson(Map<String, dynamic> json) =>
++      _$RecommendedPlantFromJson(json);
++  Map<String, dynamic> toJson() => _$RecommendedPlantToJson(this);
++}
++
++/// Health condition with herbal remedy recommendations
++@JsonSerializable()
++class Condition {
++  final String id;
++  final String name;
++  final List<String> synonyms;
++  final List<String> icdCodes;
++  final String overview;
++  final List<String> symptoms;
++  final List<String> redFlags;
++  final List<RecommendedPlant> recommendedPlants;
++  final EvidenceLevel evidenceLevel;
++  final List<Reference> references;
++  final DateTime? lastReviewedDate;
++  final List<String>? reviewedBy;
++
++  Condition({
++    required this.id,
++    required this.name,
++    required this.synonyms,
++    required this.icdCodes,
++    required this.overview,
++    required this.symptoms,
++    required this.redFlags,
++    required this.recommendedPlants,
++    required this.evidenceLevel,
++    required this.references,
++    this.lastReviewedDate,
++    this.reviewedBy,
++  });
++
++  factory Condition.fromJson(Map<String, dynamic> json) =>
++      _$ConditionFromJson(json);
++  Map<String, dynamic> toJson() => _$ConditionToJson(this);
++
++  /// Get human-readable evidence level
++  String get evidenceLevelDisplay {
++    switch (evidenceLevel) {
++      case EvidenceLevel.strongClinical:
++        return 'Strong Clinical Evidence';
++      case EvidenceLevel.humanTrial:
++        return 'Human Trial Evidence';
++      case EvidenceLevel.animal:
++        return 'Animal Study Evidence';
++      case EvidenceLevel.inVitro:
++        return 'In Vitro Evidence';
++      case EvidenceLevel.traditional:
++        return 'Traditional Use';
++    }
++  }
++
++  /// Get star rating for evidence level (1-5)
++  int get evidenceStars {
++    switch (evidenceLevel) {
++      case EvidenceLevel.strongClinical:
++        return 5;
++      case EvidenceLevel.humanTrial:
++        return 4;
++      case EvidenceLevel.animal:
++        return 3;
++      case EvidenceLevel.inVitro:
++        return 2;
++      case EvidenceLevel.traditional:
++        return 1;
++    }
++  }
++
++  /// Search helper - combines searchable text
++  String get searchableText {
++    return [
++      name,
++      ...synonyms,
++      ...icdCodes,
++      overview,
++      ...symptoms,
++    ].join(' ').toLowerCase();
++  }
++}
+diff --git a/flutter-starter/lib/models/plant.dart b/flutter-starter/lib/models/plant.dart
+new file mode 100644
+index 0000000..9a4c210
+--- /dev/null
++++ b/flutter-starter/lib/models/plant.dart
+@@ -0,0 +1,277 @@
++import 'package:json_annotation/json_annotation.dart';
++
++part 'plant.g.dart';
++
++/// Evidence level for scientific validation
++enum EvidenceLevel {
++  @JsonValue('traditional')
++  traditional,
++  @JsonValue('in_vitro')
++  inVitro,
++  @JsonValue('animal')
++  animal,
++  @JsonValue('human_trial')
++  humanTrial,
++  @JsonValue('strong_clinical')
++  strongClinical,
++}
++
++/// Contraindication severity levels
++enum Severity {
++  @JsonValue('mild')
++  mild,
++  @JsonValue('moderate')
++  moderate,
++  @JsonValue('severe')
++  severe,
++  @JsonValue('contraindicated')
++  contraindicated,
++}
++
++/// Reference to scientific literature
++@JsonSerializable()
++class Reference {
++  final String type;
++  final String? id;
++  final String title;
++  final String? authors;
++  final int? year;
++  final String? url;
++
++  Reference({
++    required this.type,
++    this.id,
++    required this.title,
++    this.authors,
++    this.year,
++    this.url,
++  });
++
++  factory Reference.fromJson(Map<String, dynamic> json) =>
++      _$ReferenceFromJson(json);
++  Map<String, dynamic> toJson() => _$ReferenceToJson(this);
++}
++
++/// Phytochemical compound information
++@JsonSerializable()
++class Phytochemical {
++  final String name;
++  final String? chemicalClass;
++  final String? pubchemId;
++  final String? casNumber;
++  final String? proposedMechanism;
++  final String? concentration;
++
++  Phytochemical({
++    required this.name,
++    this.chemicalClass,
++    this.pubchemId,
++    this.casNumber,
++    this.proposedMechanism,
++    this.concentration,
++  });
++
++  factory Phytochemical.fromJson(Map<String, dynamic> json) =>
++      _$PhytochemicalFromJson(json);
++  Map<String, dynamic> toJson() => _$PhytochemicalToJson(this);
++}
++
++/// Preparation method for herbal remedy
++@JsonSerializable()
++class PreparationMethod {
++  final String method;
++  final String instructions;
++  final String? dosage;
++  final String? frequency;
++  final String? duration;
++  final String? notes;
++
++  PreparationMethod({
++    required this.method,
++    required this.instructions,
++    this.dosage,
++    this.frequency,
++    this.duration,
++    this.notes,
++  });
++
++  factory PreparationMethod.fromJson(Map<String, dynamic> json) =>
++      _$PreparationMethodFromJson(json);
++  Map<String, dynamic> toJson() => _$PreparationMethodToJson(this);
++}
++
++/// Contraindication information
++@JsonSerializable()
++class Contraindication {
++  final String category;
++  final Severity severity;
++  final String description;
++  final List<Reference>? references;
++
++  Contraindication({
++    required this.category,
++    required this.severity,
++    required this.description,
++    this.references,
++  });
++
++  factory Contraindication.fromJson(Map<String, dynamic> json) =>
++      _$ContraindicationFromJson(json);
++  Map<String, dynamic> toJson() => _$ContraindicationToJson(this);
++
++  /// Get human-readable severity
++  String get severityDisplay {
++    switch (severity) {
++      case Severity.mild:
++        return 'Mild';
++      case Severity.moderate:
++        return 'Moderate';
++      case Severity.severe:
++        return 'Severe';
++      case Severity.contraindicated:
++        return 'Contraindicated';
++    }
++  }
++}
++
++/// Plant image information
++@JsonSerializable()
++class PlantImage {
++  final String url;
++  final String altText;
++  final String? caption;
++  final String imageType;
++  final String? thumbnailUrl;
++  final String? attribution;
++  final String? license;
++
++  PlantImage({
++    required this.url,
++    required this.altText,
++    this.caption,
++    required this.imageType,
++    this.thumbnailUrl,
++    this.attribution,
++    this.license,
++  });
++
++  factory PlantImage.fromJson(Map<String, dynamic> json) =>
++      _$PlantImageFromJson(json);
++  Map<String, dynamic> toJson() => _$PlantImageToJson(this);
++}
++
++/// Harvesting guidance information
++@JsonSerializable()
++class HarvestingGuidance {
++  final List<String> partUsed;
++  final String? harvestSeason;
++  final String? sustainabilityNotes;
++  final String? cultivationDifficulty;
++
++  HarvestingGuidance({
++    required this.partUsed,
++    this.harvestSeason,
++    this.sustainabilityNotes,
++    this.cultivationDifficulty,
++  });
++
++  factory HarvestingGuidance.fromJson(Map<String, dynamic> json) =>
++      _$HarvestingGuidanceFromJson(json);
++  Map<String, dynamic> toJson() => _$HarvestingGuidanceToJson(this);
++}
++
++/// Medicinal plant information
++@JsonSerializable()
++class Plant {
++  final String id;
++  final String scientificName;
++  final List<String> commonNames;
++  final String? family;
++  final String? genus;
++  final String? species;
++  final String description;
++  final List<PlantImage>? images;
++  final List<Phytochemical>? phytochemicals;
++  final List<PreparationMethod>? preparationMethods;
++  final List<Contraindication>? contraindications;
++  final HarvestingGuidance? harvestingGuidance;
++  final EvidenceLevel evidenceLevel;
++  final List<Reference> references;
++  final DateTime? lastReviewedDate;
++  final List<String>? reviewedBy;
++
++  Plant({
++    required this.id,
++    required this.scientificName,
++    required this.commonNames,
++    this.family,
++    this.genus,
++    this.species,
++    required this.description,
++    this.images,
++    this.phytochemicals,
++    this.preparationMethods,
++    this.contraindications,
++    this.harvestingGuidance,
++    required this.evidenceLevel,
++    required this.references,
++    this.lastReviewedDate,
++    this.reviewedBy,
++  });
++
++  factory Plant.fromJson(Map<String, dynamic> json) => _$PlantFromJson(json);
++  Map<String, dynamic> toJson() => _$PlantToJson(this);
++
++  /// Get primary common name
++  String get primaryCommonName => commonNames.isNotEmpty ? commonNames.first : scientificName;
++
++  /// Get human-readable evidence level
++  String get evidenceLevelDisplay {
++    switch (evidenceLevel) {
++      case EvidenceLevel.strongClinical:
++        return 'Strong Clinical Evidence';
++      case EvidenceLevel.humanTrial:
++        return 'Human Trial Evidence';
++      case EvidenceLevel.animal:
++        return 'Animal Study Evidence';
++      case EvidenceLevel.inVitro:
++        return 'In Vitro Evidence';
++      case EvidenceLevel.traditional:
++        return 'Traditional Use';
++    }
++  }
++
++  /// Get star rating for evidence level (1-5)
++  int get evidenceStars {
++    switch (evidenceLevel) {
++      case EvidenceLevel.strongClinical:
++        return 5;
++      case EvidenceLevel.humanTrial:
++        return 4;
++      case EvidenceLevel.animal:
++        return 3;
++      case EvidenceLevel.inVitro:
++        return 2;
++      case EvidenceLevel.traditional:
++        return 1;
++    }
++  }
++
++  /// Check if plant has severe contraindications
++  bool get hasSevereContraindications {
++    if (contraindications == null) return false;
++    return contraindications!.any(
++      (c) => c.severity == Severity.severe || c.severity == Severity.contraindicated,
++    );
++  }
++
++  /// Search helper - combines searchable text
++  String get searchableText {
++    return [
++      scientificName,
++      ...commonNames,
++      family ?? '',
++      description,
++    ].join(' ').toLowerCase();
++  }
++}
+diff --git a/flutter-starter/lib/screens/home_screen.dart b/flutter-starter/lib/screens/home_screen.dart
+new file mode 100644
+index 0000000..f23b1e7
+--- /dev/null
++++ b/flutter-starter/lib/screens/home_screen.dart
+@@ -0,0 +1,357 @@
++import 'package:flutter/material.dart';
++
++/// Home screen with search and quick links
++class HomeScreen extends StatefulWidget {
++  const HomeScreen({super.key});
++
++  @override
++  State<HomeScreen> createState() => _HomeScreenState();
++}
++
++class _HomeScreenState extends State<HomeScreen> {
++  final TextEditingController _searchController = TextEditingController();
++
++  @override
++  void dispose() {
++    _searchController.dispose();
++    super.dispose();
++  }
++
++  @override
++  Widget build(BuildContext context) {
++    return Scaffold(
++      appBar: AppBar(
++        title: const Text('NaturoPath: 101'),
++        actions: [
++          IconButton(
++            icon: const Icon(Icons.more_vert),
++            onPressed: () {
++              // TODO: Open menu/settings
++            },
++          ),
++        ],
++      ),
++      body: SingleChildScrollView(
++        child: Padding(
++          padding: const EdgeInsets.all(16.0),
++          child: Column(
++            crossAxisAlignment: CrossAxisAlignment.start,
++            children: [
++              // Search bar
++              _buildSearchBar(),
++              const SizedBox(height: 24),
++
++              // Disclaimer banner
++              _buildDisclaimerBanner(),
++              const SizedBox(height: 24),
++
++              // Quick links
++              Text(
++                'Quick Links',
++                style: Theme.of(context).textTheme.displaySmall,
++              ),
++              const SizedBox(height: 12),
++              _buildQuickLinks(),
++              const SizedBox(height: 24),
++
++              // Recently viewed (placeholder)
++              Text(
++                'Recently Viewed',
++                style: Theme.of(context).textTheme.displaySmall,
++              ),
++              const SizedBox(height: 12),
++              _buildRecentlyViewed(),
++              const SizedBox(height: 24),
++
++              // Featured content (placeholder)
++              Text(
++                'Featured Content',
++                style: Theme.of(context).textTheme.displaySmall,
++              ),
++              const SizedBox(height: 12),
++              _buildFeaturedContent(),
++            ],
++          ),
++        ),
++      ),
++      bottomNavigationBar: _buildBottomNavigation(),
++    );
++  }
++
++  Widget _buildSearchBar() {
++    return TextField(
++      controller: _searchController,
++      decoration: InputDecoration(
++        hintText: 'Search conditions, plants...',
++        prefixIcon: const Icon(Icons.search),
++        suffixIcon: _searchController.text.isNotEmpty
++            ? IconButton(
++                icon: const Icon(Icons.clear),
++                onPressed: () {
++                  setState(() {
++                    _searchController.clear();
++                  });
++                },
++              )
++            : null,
++        border: OutlineInputBorder(
++          borderRadius: BorderRadius.circular(12),
++          borderSide: BorderSide(color: Colors.grey.shade300),
++        ),
++        filled: true,
++        fillColor: Colors.white,
++      ),
++      onChanged: (value) {
++        setState(() {});
++        // TODO: Implement search
++      },
++      onSubmitted: (value) {
++        // TODO: Navigate to search results
++      },
++    );
++  }
++
++  Widget _buildDisclaimerBanner() {
++    return Container(
++      padding: const EdgeInsets.all(16),
++      decoration: BoxDecoration(
++        color: Colors.orange.shade50,
++        border: Border.all(color: Colors.orange.shade200),
++        borderRadius: BorderRadius.circular(8),
++      ),
++      child: Row(
++        children: [
++          Icon(Icons.warning_amber_rounded, color: Colors.orange.shade700),
++          const SizedBox(width: 12),
++          Expanded(
++            child: Column(
++              crossAxisAlignment: CrossAxisAlignment.start,
++              children: [
++                Text(
++                  'NOT MEDICAL ADVICE',
++                  style: TextStyle(
++                    fontWeight: FontWeight.bold,
++                    color: Colors.orange.shade900,
++                  ),
++                ),
++                const SizedBox(height: 4),
++                Text(
++                  'This app is for informational purposes only. Always consult your healthcare provider.',
++                  style: TextStyle(
++                    fontSize: 12,
++                    color: Colors.orange.shade800,
++                  ),
++                ),
++              ],
++            ),
++          ),
++        ],
++      ),
++    );
++  }
++
++  Widget _buildQuickLinks() {
++    final categories = [
++      {'name': 'Common Cold', 'icon': Icons.sick},
++      {'name': 'Sleep', 'icon': Icons.bedtime},
++      {'name': 'Anxiety', 'icon': Icons.psychology},
++      {'name': 'Pain Relief', 'icon': Icons.healing},
++    ];
++
++    return SizedBox(
++      height: 100,
++      child: ListView.builder(
++        scrollDirection: Axis.horizontal,
++        itemCount: categories.length,
++        itemBuilder: (context, index) {
++          final category = categories[index];
++          return Padding(
++            padding: const EdgeInsets.only(right: 12.0),
++            child: InkWell(
++              onTap: () {
++                // TODO: Navigate to category
++              },
++              child: Container(
++                width: 120,
++                padding: const EdgeInsets.all(12),
++                decoration: BoxDecoration(
++                  color: Colors.white,
++                  borderRadius: BorderRadius.circular(12),
++                  boxShadow: [
++                    BoxShadow(
++                      color: Colors.grey.shade200,
++                      blurRadius: 4,
++                      offset: const Offset(0, 2),
++                    ),
++                  ],
++                ),
++                child: Column(
++                  mainAxisAlignment: MainAxisAlignment.center,
++                  children: [
++                    Icon(
++                      category['icon'] as IconData,
++                      size: 32,
++                      color: Theme.of(context).primaryColor,
++                    ),
++                    const SizedBox(height: 8),
++                    Text(
++                      category['name'] as String,
++                      textAlign: TextAlign.center,
++                      style: const TextStyle(
++                        fontSize: 12,
++                        fontWeight: FontWeight.w500,
++                      ),
++                    ),
++                  ],
++                ),
++              ),
++            ),
++          );
++        },
++      ),
++    );
++  }
++
++  Widget _buildRecentlyViewed() {
++    // Placeholder - replace with actual recently viewed items
++    return Card(
++      child: ListTile(
++        leading: const CircleAvatar(
++          backgroundColor: Colors.green,
++          child: Text('🌿', style: TextStyle(fontSize: 24)),
++        ),
++        title: const Text('Echinacea'),
++        subtitle: const Text('Purple Coneflower • Immune support'),
++        trailing: Row(
++          mainAxisSize: MainAxisSize.min,
++          children: List.generate(
++            4,
++            (index) => const Icon(Icons.star, size: 16, color: Colors.amber),
++          ),
++        ),
++        onTap: () {
++          // TODO: Navigate to plant detail
++        },
++      ),
++    );
++  }
++
++  Widget _buildFeaturedContent() {
++    return Card(
++      clipBehavior: Clip.antiAlias,
++      child: Column(
++        crossAxisAlignment: CrossAxisAlignment.start,
++        children: [
++          Container(
++            height: 150,
++            color: Colors.green.shade100,
++            child: const Center(
++              child: Icon(Icons.spa, size: 64, color: Colors.green),
++            ),
++          ),
++          Padding(
++            padding: const EdgeInsets.all(16.0),
++            child: Column(
++              crossAxisAlignment: CrossAxisAlignment.start,
++              children: [
++                Text(
++                  'Sleep Better Naturally',
++                  style: Theme.of(context).textTheme.displaySmall,
++                ),
++                const SizedBox(height: 8),
++                const Text(
++                  'Discover evidence-based herbal remedies for better sleep.',
++                  style: TextStyle(color: Colors.grey),
++                ),
++                const SizedBox(height: 12),
++                ElevatedButton(
++                  onPressed: () {
++                    // TODO: Navigate to featured content
++                  },
++                  child: const Text('Learn More'),
++                ),
++              ],
++            ),
++          ),
++        ],
++      ),
++    );
++  }
++
++  Widget _buildBottomNavigation() {
++    return BottomNavigationBar(
++      type: BottomNavigationBarType.fixed,
++      currentIndex: 0,
++      selectedItemColor: Theme.of(context).primaryColor,
++      unselectedItemColor: Colors.grey,
++      items: const [
++        BottomNavigationBarItem(
++          icon: Icon(Icons.home),
++          label: 'Home',
++        ),
++        BottomNavigationBarItem(
++          icon: Icon(Icons.menu_book),
++          label: 'Browse',
++        ),
++        BottomNavigationBarItem(
++          icon: Icon(Icons.bookmark_border),
++          label: 'Saved',
++        ),
++        BottomNavigationBarItem(
++          icon: Icon(Icons.medical_services_outlined),
++          label: 'Cabinet',
++        ),
++        BottomNavigationBarItem(
++          icon: Icon(Icons.more_horiz),
++          label: 'More',
++        ),
++      ],
++      onTap: (index) {
++        // TODO: Handle navigation
++        switch (index) {
++          case 0:
++            // Already on home
++            break;
++          case 1:
++            // Navigate to browse
++            break;
++          case 2:
++            // Navigate to saved
++            break;
++          case 3:
++            // Navigate to medicine cabinet (premium)
++            _showPremiumDialog();
++            break;
++          case 4:
++            // Navigate to more/settings
++            break;
++        }
++      },
++    );
++  }
++
++  void _showPremiumDialog() {
++    showDialog(
++      context: context,
++      builder: (context) => AlertDialog(
++        title: const Text('Premium Feature'),
++        content: const Text(
++          'Medicine Cabinet is a Premium feature. Upgrade to access drug-herb interaction checking and personalized recommendations.',
++        ),
++        actions: [
++          TextButton(
++            onPressed: () => Navigator.pop(context),
++            child: const Text('Maybe Later'),
++          ),
++          ElevatedButton(
++            onPressed: () {
++              Navigator.pop(context);
++              // TODO: Navigate to subscription screen
++            },
++            child: const Text('Upgrade Now'),
++          ),
++        ],
++      ),
++    );
++  }
++}
+diff --git a/flutter-starter/lib/services/medicine_cabinet_service.dart b/flutter-starter/lib/services/medicine_cabinet_service.dart
+new file mode 100644
+index 0000000..94fcf98
+--- /dev/null
++++ b/flutter-starter/lib/services/medicine_cabinet_service.dart
+@@ -0,0 +1,316 @@
++import 'package:flutter_secure_storage/flutter_secure_storage.dart';
++import 'dart:convert';
++
++/// Interaction severity levels
++enum InteractionSeverity {
++  minor,
++  moderate,
++  major,
++  contraindicated,
++}
++
++/// Medication stored in Medicine Cabinet
++class Medication {
++  final String id;
++  final String name;
++  final List<String> activeIngredients;
++  final String? rxNormCode;
++  final String? dosage;
++  final String? frequency;
++  final String? purpose;
++  final DateTime addedDate;
++
++  Medication({
++    required this.id,
++    required this.name,
++    required this.activeIngredients,
++    this.rxNormCode,
++    this.dosage,
++    this.frequency,
++    this.purpose,
++    required this.addedDate,
++  });
++
++  Map<String, dynamic> toJson() => {
++        'id': id,
++        'name': name,
++        'activeIngredients': activeIngredients,
++        'rxNormCode': rxNormCode,
++        'dosage': dosage,
++        'frequency': frequency,
++        'purpose': purpose,
++        'addedDate': addedDate.toIso8601String(),
++      };
++
++  factory Medication.fromJson(Map<String, dynamic> json) => Medication(
++        id: json['id'],
++        name: json['name'],
++        activeIngredients: List<String>.from(json['activeIngredients']),
++        rxNormCode: json['rxNormCode'],
++        dosage: json['dosage'],
++        frequency: json['frequency'],
++        purpose: json['purpose'],
++        addedDate: DateTime.parse(json['addedDate']),
++      );
++}
++
++/// Drug-herb interaction information
++class Interaction {
++  final String plantId;
++  final String plantName;
++  final String medication;
++  final InteractionSeverity severity;
++  final String mechanism;
++  final String recommendation;
++  final List<String>? references;
++
++  Interaction({
++    required this.plantId,
++    required this.plantName,
++    required this.medication,
++    required this.severity,
++    required this.mechanism,
++    required this.recommendation,
++    this.references,
++  });
++
++  String get severityDisplay {
++    switch (severity) {
++      case InteractionSeverity.minor:
++        return 'Minor';
++      case InteractionSeverity.moderate:
++        return 'Moderate';
++      case InteractionSeverity.major:
++        return 'Major';
++      case InteractionSeverity.contraindicated:
++        return 'Contraindicated';
++    }
++  }
++
++  Map<String, dynamic> toJson() => {
++        'plantId': plantId,
++        'plantName': plantName,
++        'medication': medication,
++        'severity': severity.toString(),
++        'mechanism': mechanism,
++        'recommendation': recommendation,
++        'references': references,
++      };
++
++  factory Interaction.fromJson(Map<String, dynamic> json) => Interaction(
++        plantId: json['plantId'],
++        plantName: json['plantName'],
++        medication: json['medication'],
++        severity: InteractionSeverity.values.firstWhere(
++          (e) => e.toString() == json['severity'],
++        ),
++        mechanism: json['mechanism'],
++        recommendation: json['recommendation'],
++        references: json['references'] != null
++            ? List<String>.from(json['references'])
++            : null,
++      );
++}
++
++/// Service for managing Medicine Cabinet (Premium feature)
++/// 
++/// This service handles:
++/// - Encrypted local storage of medications
++/// - Drug-herb interaction checking
++/// - Optional cloud sync (requires user consent)
++class MedicineCabinetService {
++  static const String _storageKeyMedications = 'medicine_cabinet_medications';
++  static const String _storageKeyConsent = 'medicine_cabinet_cloud_consent';
++
++  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage(
++    aOptions: AndroidOptions(
++      encryptedSharedPreferences: true,
++    ),
++    iOptions: IOSOptions(
++      accessibility: KeychainAccessibility.first_unlock,
++    ),
++  );
++
++  /// Get all medications from secure storage
++  Future<List<Medication>> getMedications() async {
++    try {
++      final String? medicationsJson = await _secureStorage.read(
++        key: _storageKeyMedications,
++      );
++
++      if (medicationsJson == null) {
++        return [];
++      }
++
++      final List<dynamic> decoded = jsonDecode(medicationsJson);
++      return decoded.map((json) => Medication.fromJson(json)).toList();
++    } catch (e) {
++      // Log error (implement logging service)
++      print('Error loading medications: $e');
++      return [];
++    }
++  }
++
++  /// Add a medication to the cabinet
++  Future<void> addMedication(Medication medication) async {
++    try {
++      final medications = await getMedications();
++      medications.add(medication);
++      await _saveMedications(medications);
++    } catch (e) {
++      print('Error adding medication: $e');
++      rethrow;
++    }
++  }
++
++  /// Update an existing medication
++  Future<void> updateMedication(Medication medication) async {
++    try {
++      final medications = await getMedications();
++      final index = medications.indexWhere((m) => m.id == medication.id);
++
++      if (index != -1) {
++        medications[index] = medication;
++        await _saveMedications(medications);
++      }
++    } catch (e) {
++      print('Error updating medication: $e');
++      rethrow;
++    }
++  }
++
++  /// Remove a medication from the cabinet
++  Future<void> removeMedication(String medicationId) async {
++    try {
++      final medications = await getMedications();
++      medications.removeWhere((m) => m.id == medicationId);
++      await _saveMedications(medications);
++    } catch (e) {
++      print('Error removing medication: $e');
++      rethrow;
++    }
++  }
++
++  /// Clear all medications (secure deletion)
++  Future<void> clearAllMedications() async {
++    try {
++      await _secureStorage.delete(key: _storageKeyMedications);
++    } catch (e) {
++      print('Error clearing medications: $e');
++      rethrow;
++    }
++  }
++
++  /// Save medications to secure storage
++  Future<void> _saveMedications(List<Medication> medications) async {
++    final String medicationsJson = jsonEncode(
++      medications.map((m) => m.toJson()).toList(),
++    );
++    await _secureStorage.write(
++      key: _storageKeyMedications,
++      value: medicationsJson,
++    );
++  }
++
++  /// Check interactions between medications and a plant
++  /// 
++  /// This is a stub - actual implementation would call API
++  /// to check interactions against a database
++  Future<List<Interaction>> checkInteractions({
++    required String plantId,
++    List<Medication>? medications,
++  }) async {
++    // TODO: Implement API call to interaction checking service
++    // For now, return empty list
++    // 
++    // In production:
++    // 1. Get medications from storage if not provided
++    // 2. Call API with plant ID and medication list
++    // 3. Parse response and return Interaction objects
++    
++    final meds = medications ?? await getMedications();
++    
++    // Stub implementation - replace with actual API call
++    // Example API call:
++    // final response = await http.post(
++    //   Uri.parse('${apiUrl}/interactions/check'),
++    //   headers: {'Authorization': 'Bearer $token'},
++    //   body: jsonEncode({
++    //     'plantId': plantId,
++    //     'medications': meds.map((m) => {
++    //       'name': m.name,
++    //       'activeIngredients': m.activeIngredients,
++    //       'rxNormCode': m.rxNormCode,
++    //     }).toList(),
++    //   }),
++    // );
++    
++    return [];
++  }
++
++  /// Check interactions for multiple plants
++  Future<Map<String, List<Interaction>>> checkMultipleInteractions({
++    required List<String> plantIds,
++  }) async {
++    // TODO: Implement batch interaction checking
++    final Map<String, List<Interaction>> results = {};
++
++    for (final plantId in plantIds) {
++      results[plantId] = await checkInteractions(plantId: plantId);
++    }
++
++    return results;
++  }
++
++  /// Get cloud sync consent status
++  Future<bool> getCloudSyncConsent() async {
++    final String? consent = await _secureStorage.read(
++      key: _storageKeyConsent,
++    );
++    return consent == 'true';
++  }
++
++  /// Set cloud sync consent
++  Future<void> setCloudSyncConsent(bool consent) async {
++    await _secureStorage.write(
++      key: _storageKeyConsent,
++      value: consent.toString(),
++    );
++
++    if (consent) {
++      // TODO: Implement cloud sync initialization
++      // 1. Upload current medications to cloud (encrypted)
++      // 2. Set up sync listeners
++    } else {
++      // TODO: Implement cloud sync disable
++      // 1. Delete medications from cloud
++      // 2. Disable sync listeners
++    }
++  }
++
++  /// Export medications data (for sharing with healthcare provider)
++  /// Returns JSON string
++  Future<String> exportMedications() async {
++    final medications = await getMedications();
++    return jsonEncode({
++      'exportDate': DateTime.now().toIso8601String(),
++      'medications': medications.map((m) => m.toJson()).toList(),
++    });
++  }
++
++  /// Import medications data
++  Future<void> importMedications(String jsonData) async {
++    try {
++      final Map<String, dynamic> data = jsonDecode(jsonData);
++      final List<dynamic> medicationsJson = data['medications'];
++      final medications = medicationsJson
++          .map((json) => Medication.fromJson(json))
++          .toList();
++
++      await _saveMedications(medications);
++    } catch (e) {
++      print('Error importing medications: $e');
++      rethrow;
++    }
++  }
++}
+diff --git a/flutter-starter/pubspec.yaml b/flutter-starter/pubspec.yaml
+new file mode 100644
+index 0000000..97efbde
+--- /dev/null
++++ b/flutter-starter/pubspec.yaml
+@@ -0,0 +1,68 @@
++name: naturopath_101
++description: A cross-platform searchable catalog of herbal remedies and natural health information.
++publish_to: 'none'
++
++version: 1.0.0+1
++
++environment:
++  sdk: '>=3.0.0 <4.0.0'
++
++dependencies:
++  flutter:
++    sdk: flutter
++  
++  # State Management
++  provider: ^6.1.1
++  
++  # Local Storage
++  shared_preferences: ^2.2.2
++  sqflite: ^2.3.0
++  path_provider: ^2.1.1
++  
++  # Encryption
++  flutter_secure_storage: ^9.0.0
++  encrypt: ^5.0.3
++  
++  # HTTP & API
++  http: ^1.1.0
++  dio: ^5.4.0
++  
++  # JSON Serialization
++  json_annotation: ^4.8.1
++  
++  # UI Components
++  cupertino_icons: ^1.0.6
++  
++  # Search
++  diacritic: ^0.1.4
++  
++  # Images
++  cached_network_image: ^3.3.0
++  
++  # Utilities
++  intl: ^0.18.1
++  url_launcher: ^6.2.2
++
++dev_dependencies:
++  flutter_test:
++    sdk: flutter
++  
++  flutter_lints: ^3.0.1
++  build_runner: ^2.4.7
++  json_serializable: ^6.7.1
++
++flutter:
++  uses-material-design: true
++  
++  # Assets
++  # assets:
++  #   - assets/images/
++  #   - assets/data/
++  
++  # Fonts
++  # fonts:
++  #   - family: Merriweather
++  #     fonts:
++  #       - asset: fonts/Merriweather-Regular.ttf
++  #       - asset: fonts/Merriweather-Bold.ttf
++  #         weight: 700
+diff --git a/privacy-security.md b/privacy-security.md
+new file mode 100644
+index 0000000..c409189
+--- /dev/null
++++ b/privacy-security.md
+@@ -0,0 +1,401 @@
++# Privacy & Security Recommendations — NaturoPath: 101
++
++## Overview
++
++This document outlines privacy and security best practices for the NaturoPath: 101 application, with particular emphasis on the Medicine Cabinet feature, which handles potentially sensitive health information.
++
++## Core Privacy Principles
++
++### 1. Privacy by Design
++- **Minimize data collection**: Only collect data necessary for app functionality
++- **Local-first architecture**: Store sensitive data on-device by default
++- **User control**: Users decide what data to share and when
++- **Transparency**: Clear communication about data handling practices
++
++### 2. User Consent
++- **Explicit opt-in** for any cloud sync or data sharing
++- **Granular permissions** for different types of data
++- **Easy to withdraw** consent at any time
++- **Clear explanations** of why data is needed and how it will be used
++
++### 3. Data Minimization
++- Don't require user accounts for basic app functionality
++- Don't collect personal information unless necessary
++- Don't share data with third parties without explicit consent
++- Regularly purge unnecessary data
++
++## Medicine Cabinet Privacy & Security
++
++The Medicine Cabinet feature stores information about users' medications and health conditions, which is **Protected Health Information (PHI)** or **Personal Health Information** in many jurisdictions.
++
++### Local-Only Storage (Default)
++
++**Default Behavior:**
++- All Medicine Cabinet data stored **locally on device only**
++- No transmission to servers
++- No cloud backup by default
++- Data accessible only on the device where it was entered
++
++**Implementation Requirements:**
++- Use platform-specific secure storage:
++  - **iOS**: Keychain Services with `kSecAttrAccessibleWhenUnlocked`
++  - **Android**: EncryptedSharedPreferences (Jetpack Security library)
++  - **Desktop**: OS-specific credential managers or encrypted local database
++- Encrypt data at rest using AES-256
++- Implement secure deletion (overwrite data when deleted)
++- No logging of PHI to crash reports or analytics
++- Disable cloud backup for Medicine Cabinet data:
++  - iOS: Exclude from iCloud backup using `NSURLIsExcludedFromBackupKey`
++  - Android: Add `android:allowBackup="false"` for Medicine Cabinet files
++
++### Optional Cloud Sync
++
++**If users explicitly opt-in to cloud sync:**
++
++#### Legal & Compliance Considerations
++
++1. **HIPAA Compliance (US)**
++   - If storing PHI in the cloud, evaluate HIPAA applicability
++   - If HIPAA applies, you are a **Business Associate** and must:
++     - Sign Business Associate Agreement (BAA) with cloud provider
++     - Implement required administrative, physical, and technical safeguards
++     - Conduct risk assessments
++     - Maintain audit logs
++     - Have breach notification procedures
++   - Cloud providers offering HIPAA-compliant storage:
++     - AWS (S3, RDS with BAA)
++     - Google Cloud (Cloud Storage, Firestore with BAA)
++     - Azure (various services with BAA)
++     - **Note**: Firebase requires special configuration and BAA for HIPAA
++
++2. **GDPR Compliance (EU)**
++   - Health data is **special category data** under GDPR Article 9
++   - Requires **explicit consent** and appropriate safeguards
++   - Users have rights to:
++     - Access their data
++     - Rectify inaccurate data
++     - Delete their data ("right to be forgotten")
++     - Data portability
++     - Restrict processing
++   - Data Processing Agreement (DPA) required with cloud providers
++   - Consider data residency requirements (store EU data in EU)
++
++3. **Other Jurisdictions**
++   - Research health data privacy laws in target markets
++   - Canada: PIPEDA (Personal Information Protection and Electronic Documents Act)
++   - Australia: Privacy Act 1988 and Australian Privacy Principles
++   - Brazil: LGPD (Lei Geral de Proteção de Dados)
++   - California: CCPA/CPRA includes health data protections
++
++#### Technical Requirements for Cloud Sync
++
++**Encryption:**
++- **End-to-end encryption** for PHI in transit and at rest
++- Encrypt data on-device **before** sending to cloud
++- Use strong encryption (AES-256-GCM)
++- User controls the encryption key (derived from password/PIN, not stored on server)
++- Consider zero-knowledge architecture (server cannot decrypt data)
++
++**Authentication & Access Control:**
++- Strong authentication required (email/password with minimum 8 characters, or OAuth)
++- Multi-factor authentication (MFA) strongly recommended
++- Session management with secure tokens (JWT with short expiration)
++- Implement rate limiting to prevent brute force attacks
++
++**Data Transmission:**
++- All communications over HTTPS/TLS 1.3+
++- Certificate pinning for additional security
++- Validate SSL certificates properly
++
++**Server-Side Security:**
++- Follow OWASP security best practices
++- Regular security audits and penetration testing
++- Least-privilege access controls for server infrastructure
++- Encrypt data at rest in database
++- Implement database encryption (TDE - Transparent Data Encryption)
++- Secure key management (use HSM or cloud KMS)
++- Regular backup of cloud data with encryption
++- Monitor for suspicious access patterns
++
++**Audit Logging:**
++- Log access to PHI (who, what, when, where)
++- Secure storage of audit logs (encrypted, tamper-evident)
++- Retain logs per regulatory requirements (typically 6-7 years for HIPAA)
++- Regular review of logs for security incidents
++
++## General App Privacy
++
++### Analytics & Crash Reporting
++
++**Best Practices:**
++- Use privacy-respecting analytics (e.g., self-hosted PostHog, or Amplitude with strict filtering)
++- **Never log PHI** to analytics or crash reports
++- Anonymize or pseudonymize all collected data
++- Provide clear opt-out mechanism
++- Don't use analytics SDKs that share data with third parties without user consent
++
++**Recommended Approach:**
++- Collect aggregate, non-identifying usage data only
++- Examples of acceptable data:
++  - Which plant/condition pages are viewed (not which medications are stored)
++  - Search terms (sanitized to remove potentially identifying info)
++  - Feature usage statistics (e.g., "N users used search today")
++- Sanitize all data before logging:
++  - Strip user-entered text from Medicine Cabinet
++  - Remove IP addresses or hash them
++  - Don't log device identifiers with health data
++
++**Prohibited:**
++- Logging medication names or health conditions
++- Linking health data to user identity
++- Sharing crash reports containing PHI
++
++### In-App Purchases & Payment Data
++
++**Payment Processing:**
++- Use platform-specific IAP (Apple, Google) for mobile
++- For web/desktop, use PCI-DSS compliant payment processor (Stripe, etc.)
++- **Never store credit card information** on your servers
++- Payment processors handle PCI compliance
++
++**User Data:**
++- Store minimum necessary for subscription management:
++  - Subscription tier
++  - Expiration date
++  - Platform receipt/token for validation
++- Link purchases to anonymous user ID if possible
++- Don't require personal information beyond what payment processor requires
++
++### Third-Party Services
++
++**Minimize Third-Party SDKs:**
++- Audit all third-party libraries and SDKs
++- Ensure third-party services comply with privacy regulations
++- Review privacy policies of all third-party services
++- Sign Data Processing Agreements (DPAs) where required
++
++**Acceptable Third-Party Services:**
++- App stores (Apple, Google, Microsoft)
++- Payment processors (Stripe, Apple IAP, Google IAP)
++- Cloud infrastructure with BAA/DPA (AWS, Google Cloud, Azure)
++- Analytics with privacy controls (PostHog self-hosted, privacy-focused options)
++
++**Prohibited/Restricted:**
++- Advertising networks (typically incompatible with health data)
++- Social media SDKs (unless user explicitly wants to share)
++- Any service that shares data without explicit user consent
++
++### User Rights & Data Management
++
++**User Data Rights:**
++- **Access**: Provide interface for users to view all stored data
++- **Export**: Allow users to export their Medicine Cabinet data (JSON, CSV)
++- **Delete**: Implement complete data deletion
++  - Local: Secure deletion from device
++  - Cloud: Delete from all servers and backups within reasonable timeframe
++  - Provide confirmation of deletion
++- **Rectification**: Users can edit/correct their data
++
++**Account Deletion:**
++- Allow users to delete accounts easily (not buried in settings)
++- Clearly explain what data will be deleted
++- Irreversibly delete all user data within 30 days (or per regulations)
++- Send confirmation email
++
++## Privacy Policy
++
++### Required Content
++
++Your privacy policy must clearly state:
++
++1. **What data you collect**
++   - Types of data (health data, usage data, etc.)
++   - How data is collected (user input, automatic)
++
++2. **How you use data**
++   - Provide app functionality
++   - Improve user experience
++   - Comply with legal obligations
++
++3. **Data storage**
++   - Where data is stored (on-device, cloud)
++   - How long data is retained
++   - Security measures
++
++4. **Data sharing**
++   - With whom data is shared (service providers, etc.)
++   - Legal requirements (subpoenas, etc.)
++   - User-initiated sharing
++
++5. **User rights**
++   - Access, export, delete, correct data
++   - How to exercise these rights
++
++6. **Contact information**
++   - How to contact for privacy questions
++   - Data protection officer (if required)
++
++7. **Policy changes**
++   - How users will be notified
++   - When policy was last updated
++
++### Review & Updates
++
++- Review privacy policy annually or when practices change
++- Notify users of material changes
++- Require re-consent if changes significantly affect user rights
++
++## Security Best Practices
++
++### Application Security
++
++**Code Security:**
++- Regular security audits and code reviews
++- Static Application Security Testing (SAST)
++- Dependency scanning for vulnerabilities
++- Follow OWASP Mobile Security Project guidelines
++- Implement certificate pinning
++- Use secure coding practices (input validation, output encoding, etc.)
++
++**Authentication:**
++- Secure password storage (bcrypt, scrypt, or Argon2 with salt)
++- Never store passwords in plain text
++- Implement secure password reset flows
++- Optional biometric authentication (Face ID, Touch ID, fingerprint)
++- Session timeout for sensitive features
++
++**Data Validation:**
++- Validate all user input
++- Sanitize data before storage or display
++- Prevent injection attacks (SQL, XSS, etc.)
++
++**App Permissions:**
++- Request minimum necessary permissions
++- Explain why each permission is needed
++- Handle permission denial gracefully
++
++### Infrastructure Security
++
++**If Using Backend:**
++- Keep all systems patched and up-to-date
++- Use WAF (Web Application Firewall)
++- DDoS protection
++- Intrusion detection/prevention systems
++- Regular vulnerability scanning
++- Secure API design (authentication, rate limiting, input validation)
++- Implement defense in depth
++
++**Database Security:**
++- Encrypt at rest and in transit
++- Least-privilege database access
++- Regular backups (encrypted)
++- Secure backup storage
++- Test restore procedures
++
++**Secrets Management:**
++- Never commit secrets to source control
++- Use environment variables or secrets management services (AWS Secrets Manager, etc.)
++- Rotate API keys and credentials regularly
++- Separate credentials per environment (dev, staging, prod)
++
++## Incident Response
++
++### Security Breach Plan
++
++1. **Detection**: Monitor for unauthorized access
++2. **Containment**: Isolate affected systems
++3. **Assessment**: Determine scope of breach
++4. **Notification**:
++   - Notify affected users per legal requirements
++   - HIPAA: Notify within 60 days
++   - GDPR: Notify within 72 hours
++   - Include: what happened, what data, what you're doing
++5. **Remediation**: Fix vulnerability, enhance security
++6. **Documentation**: Maintain records of incident and response
++
++### Breach Notification Requirements
++
++- Determine if breach triggers notification requirements (varies by jurisdiction)
++- Prepare communication templates in advance
++- Designate responsible parties
++- Work with legal counsel
++- May need to notify:
++  - Affected users
++  - Regulators (HHS for HIPAA, DPAs for GDPR)
++  - Media (if large breach under some laws)
++
++## Development & Testing
++
++**Development Best Practices:**
++- Use fake/synthetic data in development and testing
++- Never use production data in development environments
++- Implement separate development, staging, and production environments
++- No PHI in logs, screenshots, or screen recordings
++- Clear separation of test and production databases
++
++**Testing:**
++- Penetration testing before launch
++- Security testing as part of CI/CD
++- Regular security reviews and updates
++- Test privacy features (data export, deletion, etc.)
++
++## Ongoing Compliance
++
++**Regular Tasks:**
++- Annual privacy policy review
++- Security audits (quarterly or semi-annually)
++- Dependency updates (weekly automated scans)
++- Staff training on privacy and security
++- Risk assessments
++- Update data processing agreements as needed
++- Monitor regulatory changes in target jurisdictions
++
++**Documentation:**
++- Maintain records of processing activities (GDPR requirement)
++- Document security measures
++- Keep audit logs
++- Record user consent
++- Track data retention and deletion
++
++## Recommendations by Feature
++
++### Free Tier
++- No account required
++- No data collection beyond anonymous usage analytics (opt-out available)
++- All content stored locally
++
++### Standard Tier
++- Optional account for content sync across devices
++- Minimal personal information (email only)
++- Content preferences stored with encryption
++
++### Premium Tier (Medicine Cabinet)
++- **Strong recommendation**: Local-only storage by default
++- If cloud sync offered:
++  - Evaluate HIPAA/GDPR/local regulations
++  - Implement end-to-end encryption
++  - Obtain BAA/DPA from cloud provider
++  - Conduct thorough security audit
++  - Consider cyber insurance
++  - Have breach response plan
++
++## Resources
++
++### Privacy Regulations
++- HIPAA: https://www.hhs.gov/hipaa
++- GDPR: https://gdpr.eu/
++- CCPA/CPRA: https://oag.ca.gov/privacy/ccpa
++
++### Security Guidelines
++- OWASP Mobile Security: https://owasp.org/www-project-mobile-security/
++- OWASP Top 10: https://owasp.org/www-project-top-ten/
++- NIST Cybersecurity Framework: https://www.nist.gov/cyberframework
++
++### Cloud Providers
++- AWS HIPAA: https://aws.amazon.com/compliance/hipaa-compliance/
++- Google Cloud HIPAA: https://cloud.google.com/security/compliance/hipaa
++- Azure HIPAA: https://azure.microsoft.com/en-us/overview/trusted-cloud/compliance/
++
++---
++
++**This document is guidance only and does not constitute legal advice. Consult with legal counsel and privacy/security experts when implementing health data features.**
+diff --git a/product-requirements.md b/product-requirements.md
+new file mode 100644
+index 0000000..31ab45a
+--- /dev/null
++++ b/product-requirements.md
+@@ -0,0 +1,91 @@
++Product Requirements — NaturoPath: 101
++
++Overview
++- NaturoPath: 101 is a cross-platform (mobile, tablet, desktop, web) searchable catalog of 101 common conditions with plant/herbal remedies, phytochemical breakdowns, harvesting/preparation guidance, evidence tags, high-quality images, and safety/contraindication notes.
++- Target platforms: Android (Play), iOS (App Store), macOS, Windows (Microsoft Store), Linux (optional), and web (PWA).
++- Primary UI implementation: Flutter (Dart) for a single codebase compiling to mobile and desktop.
++- Architecture: Flutter front-end, optional backend (Node/GraphQL or Firebase) for sync & content updates. Medicine Cabinet (premium) defaults to local-only storage (encrypted) for privacy; cloud sync optional with explicit consent and enhanced compliance.
++
++Core Features
++- Catalog of 101 conditions (searchable by condition name, synonyms, ICD-like keywords).
++- Plant pages (per plant) with:
++  - Scientific name, common names, taxonomy
++  - Multiple images with alt text
++  - Phytochemical list (names + PubChem/CAS where available)
++  - Known or proposed mechanisms of action
++  - Preparation methods (tea, tincture, poultice, topical)
++  - Dosage guidance (traditional ranges & safety limits)
++  - Harvesting/sustainability guidance
++  - Contraindications, pregnancy/lactation warnings
++  - Evidence level and references (PubMed / pharmacopeia links)
++- Condition pages with:
++  - Brief overview, common symptoms, red flags (when to see a doctor)
++  - Linked plant(s) and quick-usage boxes
++  - Evidence & references
++- Search:
++  - Fast typeahead, fuzzy search, synonym mapping
++  - Filters: evidence level, route of administration, contraindications (pregnancy, children), severity
++- Images:
++  - Multiple high-resolution images per plant
++  - Local caching & offline download bundles
++- Offline:
++  - Content bundles available for download (selectable)
++- Premium Medicine Cabinet:
++  - Add prescriptions by name or barcode/OCR
++  - Map medications to active ingredients (RxNorm/OpenFDA)
++  - Compare active ingredients to herb phytochemicals and known interaction rules
++  - Return severity-coded alerts with rationale & references
++  - Store medicine cabinet local-only by default (encrypted) — cloud sync optional
++- Account & subscription:
++  - Email/password (optional OAuth)
++  - IAP: Apple / Google in-app purchases for mobile; Stripe for web
++- Content moderation & provenance:
++  - Evidence level tags (traditional / in_vitro / animal / human_trial / strong_clinical)
++  - Each content item must include references or "traditional-use" flag and publish date
++  - Advisory board sign-off workflow for clinical claims
++
++Safety & Legal
++- Prominent in-app disclaimer: app is informational only, not a healthcare provider. Users must consult clinicians before starting, stopping, or substituting prescription medications.
++- Safety ribbon on every plant/condition (pregnancy, children, autoimmune, anticoagulants, CYP interactions).
++- Advisory board: at least one licensed herbalist + one clinician (MD/DO/PharmD).
++- Content review workflow and versioning.
++- Data protection: default medicine cabinet local-only and encrypted; if cloud sync required, evaluate HIPAA applicability and sign BAA with storage provider.
++
++Tech Stack (recommended)
++- Frontend: Flutter (Dart), Riverpod or Provider for state, flutter_local_notifications
++- Backend (optional): Node.js + GraphQL (Apollo) or Firebase (Firestore + Cloud Functions) for content updates
++- DB: PostgreSQL for canonical content; Elasticsearch or OpenSearch for search functionality (hosted or managed)
++- Image CDN: Cloudflare / AWS CloudFront + S3 (or Firebase Storage)
++- Pharm/Drug data: RxNorm (US), OpenFDA, DrugBank (license required), PubChem for phytochemical mapping
++- Payment: Apple/Google IAP for mobile, Stripe for web
++- CI/CD: GitHub Actions for builds, Fastlane for mobile app store automation
++- Analytics: Privacy-respecting (no PHI), e.g., posthog self-hosted or Amplitude with strict filtering
++
++Monetization & Pricing
++- Free tier: sample content (e.g., 10 conditions), typeahead, basic plant pages
++- Standard: one-time purchase OR subscription — full content, offline bundles
++- Premium: subscription — medicine cabinet, interaction checks, priority updates
++- Suggested prices:
++  - Standard: $9.99 one-time OR $2.99/month or $19.99/year
++  - Premium: $5.99–$9.99/month or $49.99/year
++- App store notes: follow Apple/Google guidelines for in-app purchases; do not charge externally for features unlocked inside the app in a way that violates store policies.
++
++Content Roadmap (phased)
++- Phase 0 (2–4 weeks): finalize editorial board, legal review, build content template, create first 15–25 fully reviewed entries
++- Phase 1 (8–12 weeks): build Flutter MVP, 50 conditions fully populated, search, standard tier, basic offline
++- Phase 2 (8 weeks): add medicine cabinet (local-only), interaction engine initial rule-set, 101 completed content, advisory board review
++- Phase 3 (4–6 weeks): app stores submission, marketing, practitioner outreach
++
++Acceptance Criteria
++- Search returns relevant results with fuzzy/synonym matching
++- Each of 101 condition pages links to at least one plant page
++- Medicine cabinet is encrypted locally; interaction check returns severity-coded results with references
++- Prominent disclaimer and "when to seek medical care" information on condition pages
++- Content must be reviewed & signed off by advisory board before publishing
++
++Deliverables provided with this handoff:
++- Data schema (JSON)
++- Sample content entries (3–6 examples)
++- CSV list of 101 condition names for content population
++- Flutter starter skeleton (models + service stubs)
++- Disclaimer, privacy & security guidance
+diff --git a/sample-entries.json b/sample-entries.json
+new file mode 100644
+index 0000000..f9b13fa
+--- /dev/null
++++ b/sample-entries.json
+@@ -0,0 +1,581 @@
++{
++  "conditions": [
++    {
++      "id": "cond_001_common_cold",
++      "name": "Common Cold",
++      "synonyms": ["Upper Respiratory Infection", "URI", "Head Cold", "Acute Viral Rhinopharyngitis"],
++      "icdCodes": ["J00"],
++      "overview": "The common cold is a viral infection of the upper respiratory tract, primarily affecting the nose and throat. It is one of the most frequent illnesses, with adults experiencing 2-3 colds per year on average. While uncomfortable, colds are generally self-limiting and resolve within 7-10 days.",
++      "symptoms": [
++        "Runny or stuffy nose",
++        "Sore throat",
++        "Cough",
++        "Sneezing",
++        "Mild headache",
++        "Low-grade fever (rare in adults)",
++        "Fatigue",
++        "Watery eyes"
++      ],
++      "redFlags": [
++        "Fever above 101.3°F (38.5°C) lasting more than 3 days",
++        "Symptoms persisting beyond 10 days without improvement",
++        "Severe headache or facial pain (possible sinusitis)",
++        "Difficulty breathing or shortness of breath",
++        "Chest pain",
++        "Symptoms in infants under 3 months"
++      ],
++      "recommendedPlants": [
++        {
++          "plantId": "plant_001_echinacea",
++          "usage": "Take at the first sign of cold symptoms. May reduce duration and severity when taken early.",
++          "evidenceLevel": "human_trial"
++        }
++      ],
++      "evidenceLevel": "human_trial",
++      "references": [
++        {
++          "type": "review",
++          "id": "PMID:24554461",
++          "title": "Echinacea for preventing and treating the common cold",
++          "authors": "Karsch-Völk M, Barrett B, Kiefer D, et al.",
++          "year": 2014,
++          "url": "https://pubmed.ncbi.nlm.nih.gov/24554461/"
++        }
++      ],
++      "lastReviewedDate": "2024-01-15",
++      "reviewedBy": ["advisor_001", "advisor_002"]
++    },
++    {
++      "id": "cond_002_insomnia",
++      "name": "Insomnia",
++      "synonyms": ["Sleep Disorder", "Sleeplessness", "Sleep Disturbance"],
++      "icdCodes": ["G47.0", "F51.0"],
++      "overview": "Insomnia is characterized by difficulty falling asleep, staying asleep, or waking too early and being unable to return to sleep. It can be acute (short-term) or chronic (lasting three months or longer). Chronic insomnia affects approximately 10-15% of adults and can significantly impact quality of life, mood, and daytime functioning.",
++      "symptoms": [
++        "Difficulty falling asleep despite being tired",
++        "Waking frequently during the night",
++        "Waking too early in the morning",
++        "Non-restorative sleep",
++        "Daytime fatigue",
++        "Irritability or mood changes",
++        "Difficulty concentrating",
++        "Increased errors or accidents"
++      ],
++      "redFlags": [
++        "Symptoms of sleep apnea (loud snoring, gasping for air during sleep)",
++        "Persistent insomnia despite good sleep hygiene",
++        "Significant daytime impairment affecting work or safety",
++        "Symptoms of depression or anxiety",
++        "Use of alcohol or sedatives to sleep",
++        "Restless legs or periodic limb movements"
++      ],
++      "recommendedPlants": [
++        {
++          "plantId": "plant_002_valerian",
++          "usage": "Take 300-600mg of valerian root extract 30 minutes to 2 hours before bedtime. May improve sleep quality and reduce time to fall asleep.",
++          "evidenceLevel": "human_trial"
++        }
++      ],
++      "evidenceLevel": "human_trial",
++      "references": [
++        {
++          "type": "review",
++          "id": "PMID:16335332",
++          "title": "Valerian for sleep: a systematic review and meta-analysis",
++          "authors": "Fernández-San-Martín MI, Masa-Font R, Palacios-Soler L, et al.",
++          "year": 2010,
++          "url": "https://pubmed.ncbi.nlm.nih.gov/16335332/"
++        }
++      ],
++      "lastReviewedDate": "2024-01-15",
++      "reviewedBy": ["advisor_001", "advisor_003"]
++    },
++    {
++      "id": "cond_003_mild_anxiety",
++      "name": "Mild Anxiety",
++      "synonyms": ["Anxiety", "Nervousness", "Worry", "Anxious Feelings"],
++      "icdCodes": ["F41.1", "F41.9"],
++      "overview": "Mild anxiety involves feelings of worry, nervousness, or unease that are disproportionate to the actual threat or situation. While some anxiety is normal and adaptive, persistent or excessive anxiety can interfere with daily activities. Mild anxiety is distinguished from anxiety disorders by its lower intensity and lesser impact on functioning.",
++      "symptoms": [
++        "Restlessness or feeling on edge",
++        "Difficulty concentrating",
++        "Muscle tension",
++        "Sleep disturbance",
++        "Irritability",
++        "Mild worry or apprehension",
++        "Occasional rapid heartbeat",
++        "Butterflies in stomach"
++      ],
++      "redFlags": [
++        "Panic attacks with severe physical symptoms",
++        "Anxiety interfering significantly with work, school, or relationships",
++        "Avoidance of normal activities due to anxiety",
++        "Thoughts of self-harm",
++        "Severe physical symptoms (chest pain, difficulty breathing)",
++        "Symptoms of depression alongside anxiety",
++        "Substance use to manage anxiety"
++      ],
++      "recommendedPlants": [
++        {
++          "plantId": "plant_003_kava",
++          "usage": "Take 120-240mg of kavalactones daily for short-term relief of mild anxiety. Not recommended for long-term use due to potential liver concerns.",
++          "evidenceLevel": "human_trial"
++        }
++      ],
++      "evidenceLevel": "human_trial",
++      "references": [
++        {
++          "type": "review",
++          "id": "PMID:12810768",
++          "title": "Kava extract for treating anxiety",
++          "authors": "Pittler MH, Ernst E",
++          "year": 2003,
++          "url": "https://pubmed.ncbi.nlm.nih.gov/12810768/"
++        }
++      ],
++      "lastReviewedDate": "2024-01-15",
++      "reviewedBy": ["advisor_001", "advisor_004"]
++    }
++  ],
++  "plants": [
++    {
++      "id": "plant_001_echinacea",
++      "scientificName": "Echinacea purpurea",
++      "commonNames": ["Purple Coneflower", "Echinacea"],
++      "family": "Asteraceae",
++      "genus": "Echinacea",
++      "species": "purpurea",
++      "description": "Echinacea purpurea is a flowering plant native to North America, widely recognized for its immune-supporting properties. The plant features distinctive purple-pink petals surrounding a spiky central cone. Traditionally used by Native American tribes for various ailments, echinacea is now one of the most popular herbal supplements for immune health.",
++      "images": [
++        {
++          "url": "https://example.com/images/echinacea_whole_plant.jpg",
++          "altText": "Purple coneflower (Echinacea purpurea) in full bloom showing characteristic drooping purple petals",
++          "caption": "Echinacea purpurea in bloom",
++          "imageType": "whole_plant",
++          "thumbnailUrl": "https://example.com/images/thumbs/echinacea_whole_plant.jpg",
++          "license": "CC BY-SA 4.0"
++        },
++        {
++          "url": "https://example.com/images/echinacea_root.jpg",
++          "altText": "Dried echinacea root showing fibrous structure",
++          "caption": "Echinacea root - primary medicinal part",
++          "imageType": "root",
++          "thumbnailUrl": "https://example.com/images/thumbs/echinacea_root.jpg",
++          "license": "CC BY-SA 4.0"
++        }
++      ],
++      "phytochemicals": [
++        {
++          "name": "Echinacoside",
++          "chemicalClass": "Phenolic glycoside",
++          "pubchemId": "5281771",
++          "proposedMechanism": "Immune modulation, anti-inflammatory activity",
++          "concentration": "0.3-1.3% in root"
++        },
++        {
++          "name": "Cichoric acid",
++          "chemicalClass": "Phenolic acid",
++          "pubchemId": "5281764",
++          "proposedMechanism": "Antioxidant, antiviral, immune stimulation",
++          "concentration": "Up to 2% in aerial parts"
++        },
++        {
++          "name": "Alkamides",
++          "chemicalClass": "Alkylamides",
++          "proposedMechanism": "Immunomodulation via cannabinoid receptor interaction",
++          "concentration": "Variable, primarily in roots"
++        },
++        {
++          "name": "Polysaccharides",
++          "chemicalClass": "Complex carbohydrates",
++          "proposedMechanism": "Macrophage activation, immune system enhancement",
++          "concentration": "5-10%"
++        }
++      ],
++      "preparationMethods": [
++        {
++          "method": "tincture",
++          "instructions": "Use 1:5 ratio of dried root to 40% alcohol. Macerate for 2-4 weeks, shaking daily.",
++          "dosage": "2-4 ml (40-80 drops)",
++          "frequency": "3 times daily",
++          "duration": "At first sign of cold, continue for 7-10 days maximum",
++          "notes": "Most commonly used preparation. Take at onset of symptoms for best results."
++        },
++        {
++          "method": "tea",
++          "instructions": "Steep 1-2 grams of dried root or aerial parts in hot water for 10-15 minutes.",
++          "dosage": "1 cup",
++          "frequency": "3-4 times daily",
++          "duration": "7-10 days maximum",
++          "notes": "Less concentrated than tincture but still effective."
++        },
++        {
++          "method": "capsule",
++          "instructions": "Use standardized extract capsules.",
++          "dosage": "300-500mg",
++          "frequency": "3 times daily",
++          "duration": "7-10 days maximum",
++          "notes": "Ensure product is standardized to contain active compounds."
++        }
++      ],
++      "contraindications": [
++        {
++          "category": "autoimmune",
++          "severity": "moderate",
++          "description": "May stimulate immune system and potentially worsen autoimmune conditions such as multiple sclerosis, lupus, rheumatoid arthritis, or others.",
++          "references": [
++            {
++              "type": "pharmacopeia",
++              "title": "Echinacea - Autoimmune Disease Considerations",
++              "year": 2020
++            }
++          ]
++        },
++        {
++          "category": "pregnancy",
++          "severity": "mild",
++          "description": "Limited safety data during pregnancy. Some studies suggest safety, but consult healthcare provider.",
++          "references": []
++        },
++        {
++          "category": "children",
++          "severity": "mild",
++          "description": "Generally considered safe for children over 2 years. Not recommended for infants.",
++          "references": []
++        },
++        {
++          "category": "other",
++          "severity": "moderate",
++          "description": "Avoid in individuals allergic to plants in the Asteraceae family (ragweed, marigolds, daisies).",
++          "references": []
++        }
++      ],
++      "harvestingGuidance": {
++        "partUsed": ["root", "aerial parts", "flowers"],
++        "harvestSeason": "Roots: fall after 3-4 years growth. Aerial parts: during flowering (summer).",
++        "sustainabilityNotes": "Cultivate rather than wild-harvest. Plant is easy to grow and readily available. Wild populations should not be harvested.",
++        "cultivationDifficulty": "easy"
++      },
++      "evidenceLevel": "human_trial",
++      "references": [
++        {
++          "type": "review",
++          "id": "PMID:24554461",
++          "title": "Echinacea for preventing and treating the common cold",
++          "authors": "Karsch-Völk M, Barrett B, Kiefer D, et al.",
++          "year": 2014,
++          "url": "https://pubmed.ncbi.nlm.nih.gov/24554461/"
++        },
++        {
++          "type": "pubmed",
++          "id": "PMID:17313687",
++          "title": "Evaluation of echinacea for prevention and treatment of the common cold: a meta-analysis",
++          "authors": "Shah SA, Sander S, White CM, et al.",
++          "year": 2007,
++          "url": "https://pubmed.ncbi.nlm.nih.gov/17313687/"
++        }
++      ],
++      "lastReviewedDate": "2024-01-15",
++      "reviewedBy": ["advisor_001", "advisor_002"]
++    },
++    {
++      "id": "plant_002_valerian",
++      "scientificName": "Valeriana officinalis",
++      "commonNames": ["Valerian", "Garden Heliotrope", "All-Heal"],
++      "family": "Caprifoliaceae",
++      "genus": "Valeriana",
++      "species": "officinalis",
++      "description": "Valeriana officinalis is a perennial flowering plant native to Europe and Asia, now naturalized in North America. Known for its sedative and anxiolytic properties, valerian has been used for centuries to promote sleep and reduce anxiety. The root has a distinctive, pungent odor often described as earthy or musky. Despite the smell, it is one of the most well-researched herbal sleep aids.",
++      "images": [
++        {
++          "url": "https://example.com/images/valerian_flowers.jpg",
++          "altText": "Valerian plant with clusters of small pink-white flowers",
++          "caption": "Valeriana officinalis in bloom",
++          "imageType": "flower",
++          "thumbnailUrl": "https://example.com/images/thumbs/valerian_flowers.jpg",
++          "license": "CC BY-SA 4.0"
++        },
++        {
++          "url": "https://example.com/images/valerian_root.jpg",
++          "altText": "Fresh valerian root showing characteristic appearance",
++          "caption": "Valerian root - the primary medicinal part",
++          "imageType": "root",
++          "thumbnailUrl": "https://example.com/images/thumbs/valerian_root.jpg",
++          "license": "CC BY-SA 4.0"
++        }
++      ],
++      "phytochemicals": [
++        {
++          "name": "Valerenic acid",
++          "chemicalClass": "Sesquiterpenoid",
++          "pubchemId": "5281664",
++          "proposedMechanism": "GABA-A receptor modulation, increases GABA availability in synaptic cleft",
++          "concentration": "0.1-0.8% in root"
++        },
++        {
++          "name": "Valepotriates",
++          "chemicalClass": "Iridoid esters",
++          "proposedMechanism": "Sedative effects, though unstable and may degrade during processing",
++          "concentration": "Variable, 0.5-2%"
++        },
++        {
++          "name": "Isovaleric acid",
++          "chemicalClass": "Carboxylic acid",
++          "casNumber": "503-74-2",
++          "proposedMechanism": "Contributes to sedative effects; responsible for characteristic odor",
++          "concentration": "Trace amounts"
++        },
++        {
++          "name": "Lignans",
++          "chemicalClass": "Phenolic compounds",
++          "proposedMechanism": "Antioxidant activity",
++          "concentration": "Variable"
++        }
++      ],
++      "preparationMethods": [
++        {
++          "method": "extract",
++          "instructions": "Use standardized valerian root extract (0.3-0.8% valerenic acid).",
++          "dosage": "300-600mg",
++          "frequency": "Once daily, 30 minutes to 2 hours before bedtime",
++          "duration": "Can be used for several weeks; effectiveness may increase with continued use",
++          "notes": "Most common and well-studied preparation. Allow 2-4 weeks for full effects."
++        },
++        {
++          "method": "tea",
++          "instructions": "Steep 2-3 grams of dried valerian root in hot water for 10-15 minutes.",
++          "dosage": "1 cup",
++          "frequency": "1-2 times daily, with one dose before bedtime",
++          "duration": "Several weeks as needed",
++          "notes": "Has strong odor. May be combined with other relaxing herbs like lemon balm or chamomile."
++        },
++        {
++          "method": "tincture",
++          "instructions": "Use 1:5 ratio with 70% alcohol.",
++          "dosage": "4-6 ml",
++          "frequency": "Once before bedtime",
++          "duration": "Several weeks",
++          "notes": "Alcohol-based tinctures preserve valepotriates better than aqueous extracts."
++        }
++      ],
++      "contraindications": [
++        {
++          "category": "pregnancy",
++          "severity": "moderate",
++          "description": "Insufficient safety data during pregnancy. Avoid use during pregnancy and lactation.",
++          "references": []
++        },
++        {
++          "category": "children",
++          "severity": "moderate",
++          "description": "Not recommended for children under 3 years. Use with caution in older children.",
++          "references": []
++        },
++        {
++          "category": "liver_disease",
++          "severity": "moderate",
++          "description": "Rare reports of hepatotoxicity. Use with caution in individuals with liver disease.",
++          "references": [
++            {
++              "type": "pubmed",
++              "id": "PMID:16116559",
++              "title": "Valerian-associated hepatotoxicity",
++              "year": 2005
++            }
++          ]
++        },
++        {
++          "category": "surgery",
++          "severity": "moderate",
++          "description": "May potentiate sedative effects of anesthesia. Discontinue at least 2 weeks before surgery.",
++          "references": []
++        },
++        {
++          "category": "other",
++          "severity": "mild",
++          "description": "May cause drowsiness. Do not operate heavy machinery or drive until you know how it affects you. Avoid combining with alcohol or other sedatives.",
++          "references": []
++        }
++      ],
++      "harvestingGuidance": {
++        "partUsed": ["root"],
++        "harvestSeason": "Fall of second year, after aerial parts have died back",
++        "sustainabilityNotes": "Easily cultivated. Prefers moist, rich soil. Wild harvest should be sustainable and from abundant populations only.",
++        "cultivationDifficulty": "easy"
++      },
++      "evidenceLevel": "human_trial",
++      "references": [
++        {
++          "type": "review",
++          "id": "PMID:16335332",
++          "title": "Valerian for sleep: a systematic review and meta-analysis",
++          "authors": "Fernández-San-Martín MI, Masa-Font R, Palacios-Soler L, et al.",
++          "year": 2010,
++          "url": "https://pubmed.ncbi.nlm.nih.gov/16335332/"
++        },
++        {
++          "type": "pubmed",
++          "id": "PMID:10815010",
++          "title": "Valerian extract and valerenic acid are partial agonists of the 5-HT5a receptor in vitro",
++          "authors": "Dietz BM, Mahady GB, Pauli GF, et al.",
++          "year": 2005
++        }
++      ],
++      "lastReviewedDate": "2024-01-15",
++      "reviewedBy": ["advisor_001", "advisor_003"]
++    },
++    {
++      "id": "plant_003_kava",
++      "scientificName": "Piper methysticum",
++      "commonNames": ["Kava", "Kava Kava", "Awa", "Yaqona"],
++      "family": "Piperaceae",
++      "genus": "Piper",
++      "species": "methysticum",
++      "description": "Piper methysticum is a plant native to the South Pacific islands, where it has been used ceremonially and medicinally for over 3,000 years. The root contains kavalactones, compounds with anxiolytic and muscle-relaxant properties. Kava has gained popularity in Western countries as a natural remedy for anxiety, though concerns about potential liver toxicity have led to restrictions in some countries.",
++      "images": [
++        {
++          "url": "https://example.com/images/kava_plant.jpg",
++          "altText": "Kava plant showing heart-shaped leaves in tropical setting",
++          "caption": "Piper methysticum growing in natural habitat",
++          "imageType": "whole_plant",
++          "thumbnailUrl": "https://example.com/images/thumbs/kava_plant.jpg",
++          "license": "CC BY-SA 4.0"
++        },
++        {
++          "url": "https://example.com/images/kava_root.jpg",
++          "altText": "Kava root showing woody, fibrous structure",
++          "caption": "Kava root - contains anxiolytic kavalactones",
++          "imageType": "root",
++          "thumbnailUrl": "https://example.com/images/thumbs/kava_root.jpg",
++          "license": "CC BY-SA 4.0"
++        }
++      ],
++      "phytochemicals": [
++        {
++          "name": "Kavain",
++          "chemicalClass": "Kavalactone",
++          "pubchemId": "3503",
++          "proposedMechanism": "GABA-A receptor modulation, voltage-gated sodium channel blockade",
++          "concentration": "Variable, total kavalactones 3-20%"
++        },
++        {
++          "name": "Dihydrokavain",
++          "chemicalClass": "Kavalactone",
++          "pubchemId": "5281557",
++          "proposedMechanism": "Anxiolytic effects, muscle relaxation",
++          "concentration": "Part of total kavalactone content"
++        },
++        {
++          "name": "Methysticin",
++          "chemicalClass": "Kavalactone",
++          "pubchemId": "5281569",
++          "proposedMechanism": "GABA receptor interaction, neuroprotective effects",
++          "concentration": "Part of total kavalactone content"
++        },
++        {
++          "name": "Yangonin",
++          "chemicalClass": "Kavalactone",
++          "pubchemId": "5281602",
++          "proposedMechanism": "Cannabinoid receptor interaction, anxiolytic activity",
++          "concentration": "Part of total kavalactone content"
++        }
++      ],
++      "preparationMethods": [
++        {
++          "method": "extract",
++          "instructions": "Use standardized extract containing 70% kavalactones.",
++          "dosage": "120-240mg kavalactones",
++          "frequency": "1-3 times daily",
++          "duration": "Short-term use only (up to 4-8 weeks) due to liver safety concerns",
++          "notes": "Water-based or aqueous-ethanol extracts preferred. Avoid acetone or ethanol-only extracts."
++        },
++        {
++          "method": "tea",
++          "instructions": "Traditional preparation: pound or grind root, mix with cold water, strain through cloth.",
++          "dosage": "2-4 grams of root powder",
++          "frequency": "1-2 times daily",
++          "duration": "Short-term use",
++          "notes": "Traditional aqueous preparation may have better safety profile than alcoholic extracts."
++        }
++      ],
++      "contraindications": [
++        {
++          "category": "liver_disease",
++          "severity": "contraindicated",
++          "description": "Contraindicated in individuals with liver disease or history of liver problems. Rare but serious cases of hepatotoxicity reported.",
++          "references": [
++            {
++              "type": "pubmed",
++              "id": "PMID:12810768",
++              "title": "Kava and the risk of hepatotoxicity",
++              "year": 2007
++            }
++          ]
++        },
++        {
++          "category": "pregnancy",
++          "severity": "contraindicated",
++          "description": "Not recommended during pregnancy or lactation due to insufficient safety data.",
++          "references": []
++        },
++        {
++          "category": "children",
++          "severity": "contraindicated",
++          "description": "Not recommended for children under 18.",
++          "references": []
++        },
++        {
++          "category": "cyp_interaction",
++          "severity": "major",
++          "description": "May inhibit CYP450 enzymes, particularly CYP2D6 and CYP3A4. Can interact with many medications.",
++          "references": [
++            {
++              "type": "pubmed",
++              "title": "Kava and CYP450 enzyme interactions",
++              "year": 2008
++            }
++          ]
++        },
++        {
++          "category": "surgery",
++          "severity": "major",
++          "description": "Discontinue at least 2 weeks before surgery due to potential interaction with anesthesia.",
++          "references": []
++        },
++        {
++          "category": "other",
++          "severity": "moderate",
++          "description": "May cause drowsiness. Do not combine with alcohol, benzodiazepines, or other CNS depressants. Monitor liver function if using regularly. Avoid driving or operating machinery.",
++          "references": []
++        }
++      ],
++      "harvestingGuidance": {
++        "partUsed": ["root"],
++        "harvestSeason": "Roots harvested after 3-5 years of growth",
++        "sustainabilityNotes": "Cultivated commercially in Pacific islands. Wild harvest threatens natural populations. Purchase only from ethical, sustainable sources. Plant is difficult to cultivate outside tropical regions.",
++        "cultivationDifficulty": "difficult"
++      },
++      "evidenceLevel": "human_trial",
++      "references": [
++        {
++          "type": "review",
++          "id": "PMID:12810768",
++          "title": "Kava extract for treating anxiety",
++          "authors": "Pittler MH, Ernst E",
++          "year": 2003,
++          "url": "https://pubmed.ncbi.nlm.nih.gov/12810768/"
++        },
++        {
++          "type": "pubmed",
++          "id": "PMID:23169470",
++          "title": "Kava for the treatment of generalized anxiety disorder (K-GAD): study protocol for a randomized controlled trial",
++          "authors": "Sarris J, Stough C, Teschke R, et al.",
++          "year": 2013,
++          "url": "https://pubmed.ncbi.nlm.nih.gov/23169470/"
++        }
++      ],
++      "lastReviewedDate": "2024-01-15",
++      "reviewedBy": ["advisor_001", "advisor_004"]
++    }
++  ]
++}
+diff --git a/subscription-pricing.md b/subscription-pricing.md
+new file mode 100644
+index 0000000..0487bf3
+--- /dev/null
++++ b/subscription-pricing.md
+@@ -0,0 +1,409 @@
++# Subscription & Pricing Options — NaturoPath: 101
++
++## Pricing Tiers
++
++### FREE Tier
++**Price**: $0
++
++**Included Features**:
++- Access to 10 sample conditions (curated selection)
++- Basic plant information for associated herbs
++- Search functionality (limited to free content)
++- Read-only access to safety information and disclaimers
++- Basic UI without premium features
++
++**Purpose**: 
++- Allow users to evaluate content quality
++- Build trust before purchase
++- Comply with app store trial requirements
++
++**Limitations**:
++- Cannot access full catalog (101 conditions)
++- No offline content downloads
++- No Medicine Cabinet feature
++- Basic support only
++- Ads may be displayed (optional revenue stream)
++
++**Sample Free Content**:
++1. Common Cold
++2. Headache (Tension)
++3. Minor Burns
++4. Nausea
++5. Stress
++6. Muscle Soreness
++7. Seasonal Allergies
++8. Insomnia
++9. Indigestion
++10. Minor Cuts and Scrapes
++
++---
++
++### STANDARD Tier
++**Price**: 
++- **One-time purchase**: $9.99 (lifetime access)
++- **OR Monthly subscription**: $2.99/month
++- **OR Annual subscription**: $19.99/year ($1.67/month, save 44%)
++
++**Included Features**:
++- ✅ **Full catalog**: All 101 conditions with detailed information
++- ✅ **Complete plant database**: Comprehensive profiles for all herbs
++- ✅ **Offline content bundles**: Download conditions for offline access
++- ✅ **Advanced search**: Full-text search with filters (evidence level, contraindications, preparation methods)
++- ✅ **Bookmarks/Favorites**: Save plants and conditions for quick access
++- ✅ **No ads**: Clean, uninterrupted experience
++- ✅ **Regular content updates**: Access to new entries and updated research
++- ✅ **Multi-device sync**: Access content across devices (account required)
++- ✅ **High-resolution images**: Multiple images per plant
++- ✅ **Detailed references**: Full citations and links to research
++- ✅ **Priority support**: Email support with faster response times
++
++**Best For**:
++- Users interested in herbal remedies for personal knowledge
++- Students and learners
++- General wellness enthusiasts
++- Users who don't take prescription medications
++
++**Recommended Monetization Strategy**:
++- Offer both one-time and subscription options
++- Emphasize annual subscription (best value)
++- One-time purchase attracts users hesitant about subscriptions
++- Subscription generates predictable recurring revenue
++
++---
++
++### PREMIUM Tier
++**Price**:
++- **Monthly subscription**: $5.99/month
++- **Annual subscription**: $49.99/year ($4.17/month, save 30%)
++
++**Included Features**:
++- ✅ **Everything in Standard**
++- ✅ **Medicine Cabinet**: Securely store your medications and supplements
++- ✅ **Drug-Herb Interaction Checker**: AI-powered analysis of potential interactions
++- ✅ **Severity ratings**: Color-coded alerts (minor, moderate, major, contraindicated)
++- ✅ **Personalized recommendations**: Herb suggestions based on conditions and medications
++- ✅ **Interaction reports**: Detailed explanations with mechanisms and references
++- ✅ **Export reports**: Share interaction reports with healthcare providers (PDF)
++- ✅ **Cloud sync** (optional): Encrypted cloud backup of Medicine Cabinet
++- ✅ **Priority updates**: First access to new features and content
++- ✅ **Advanced filters**: Search by interaction potential, CYP enzymes affected
++- ✅ **Premium support**: Priority email support + chat support
++
++**Best For**:
++- Users currently taking prescription medications
++- Users with multiple health conditions
++- Healthcare practitioners (herbalists, naturopaths, nurses)
++- Users who want comprehensive safety checks
++
++**Value Proposition**:
++- Peace of mind when considering herbal remedies
++- Avoid potentially dangerous interactions
++- Professional-grade tool at consumer pricing
++
++---
++
++## Pricing Strategy
++
++### Regional Pricing
++
++Adjust pricing based on App Store region to maximize accessibility and revenue:
++
++| Region | Standard Annual | Premium Annual |
++|--------|----------------|----------------|
++| US, Canada, Western Europe | $19.99 | $49.99 |
++| Eastern Europe, Latin America | $14.99 | $34.99 |
++| India, Southeast Asia | $9.99 | $24.99 |
++| Australia, Japan | $22.99 | $54.99 |
++
++**Implementation**:
++- Use App Store pricing tiers
++- Apple/Google handle currency conversion
++- Consider purchasing power parity
++
++### Free Trial
++
++**Offer 7-day free trial** for both Standard and Premium tiers:
++- Increases conversion rates (industry standard: 2-5% → 10-25% with trial)
++- Users experience full value before commitment
++- Required by many app stores for subscriptions
++
++**Trial Strategy**:
++- Premium trial includes all features
++- Send reminder notifications: Day 5 ("2 days left"), Day 6 ("Last day")
++- Graceful downgrade to free tier if not converted
++- Easy cancellation process (App Store requirement)
++
++### Upgrade Path
++
++**Free → Standard → Premium**
++
++Allow seamless upgrades:
++- One-time purchase of Standard can upgrade to Premium
++- Credit partial value of one-time purchase toward first year of Premium
++- Proration handled by App Store for subscription changes
++- Clear upgrade prompts when accessing Premium features
++
++### Educational/Practitioner Discounts
++
++Consider offering discounts for:
++- **Students**: 40% off with .edu email verification (e.g., $11.99/year Standard, $29.99/year Premium)
++- **Healthcare practitioners**: 30% off with license verification
++- **Bulk/institutional licensing**: Custom pricing for clinics, schools
++
++**Verification**: Use services like SheerID or UNiDAYS
++
++## Payment Processing
++
++### Mobile (iOS & Android)
++
++**Use native In-App Purchases (IAP)**:
++- **Apple App Store**: StoreKit 2 API
++  - Apple takes 30% commission (15% for subscriptions after year 1, or if under $1M revenue via Small Business Program)
++  - Users billed through Apple ID
++  - Subscriptions auto-renew
++  - Family Sharing supported
++
++- **Google Play Store**: Google Play Billing Library
++  - Google takes 15% commission (subscriptions)
++  - Users billed through Google account
++  - Subscriptions auto-renew
++  - Promotional offers supported
++
++**Receipt Validation**:
++- Server-side validation of receipts required
++- Prevent piracy and fraud
++- Use Apple's App Store Server API or Google Play Developer API
++- Libraries: react-native-iap (Flutter: in_app_purchase)
++
++### Web/Desktop
++
++**Use Stripe or alternative payment processor**:
++- PCI-DSS compliant (Stripe handles compliance)
++- Stripe takes ~2.9% + $0.30 per transaction
++- Support credit cards, Apple Pay, Google Pay
++- Subscription management built-in
++
++**Important**: 
++- ⚠️ **Apple/Google policies prohibit** directing users to external purchase flows from the app
++- Cannot advertise lower web prices in mobile app
++- Web purchases must use separate account system
++- Use email to notify users of web option (after sign-up)
++
++## Promotional Strategies
++
++### Launch Promotion
++- **50% off first year** of annual subscriptions (first 1,000 users)
++- **Lifetime Standard** at special price ($6.99 instead of $9.99) for early adopters
++- Create urgency and early user base
++
++### Seasonal Promotions
++- **Back to School** (Sept): Student discount + promo for Standard
++- **New Year** (Jan): "New Year, New Health" - Premium discount
++- **Cold & Flu Season** (Oct-Nov): Highlight immune support content + promo
++
++### Referral Program
++- Give 1 month free Premium to both referrer and referee
++- Track with unique referral codes
++- Incentivize word-of-mouth growth
++
++### Content Marketing
++- **Blog/newsletter**: Free health tips, highlight specific plants
++- **Social media**: Instagram/TikTok with plant spotlights
++- **YouTube**: Short videos on preparation methods
++- Include CTAs to download app
++
++## Retention Strategies
++
++### Reduce Churn
++
++**Tactics**:
++1. **Engagement notifications**: 
++   - "New research on [saved plant]"
++   - "Seasonal remedies for [current season]"
++   - Limit to 2-4 per month (avoid spam)
++
++2. **Personalization**:
++   - Content recommendations based on viewed plants/conditions
++   - Highlight features user hasn't tried
++
++3. **Value reminders**:
++   - Monthly email: "You saved $X this month vs. individual purchases"
++   - Show usage stats: "You've researched 15 remedies this month"
++
++4. **Win-back campaigns**:
++   - If subscription cancelled: offer 25% discount to rejoin (within 30 days)
++   - Exit survey: understand why users cancel
++
++5. **Continuous content updates**:
++   - Add new conditions (beyond 101)
++   - Update research regularly
++   - Show "Updated" badges on refreshed content
++
++### Pause Subscription (Optional)
++
++Allow users to pause subscription for 1-3 months:
++- Reduces churn (user might return vs. cancel permanently)
++- Useful for seasonal users
++- Available on some platforms (Apple, Stripe support)
++
++## Analytics & Metrics
++
++### Key Metrics to Track
++
++**Acquisition**:
++- Cost per install (CPI)
++- Organic vs. paid installs
++- Install-to-registration rate
++
++**Activation**:
++- Trial start rate (installs → trial)
++- Feature adoption (% using search, browsing, Medicine Cabinet)
++- Time to first value (how quickly users engage)
++
++**Revenue**:
++- Trial-to-paid conversion rate (target: 20%+)
++- Monthly Recurring Revenue (MRR)
++- Average Revenue Per User (ARPU)
++- Lifetime Value (LTV)
++
++**Retention**:
++- Churn rate (monthly)
++- Subscription renewal rate
++- Daily/Monthly Active Users (DAU/MAU)
++
++**Expansion**:
++- Upgrade rate (Free → Standard → Premium)
++- Cross-sell (Standard one-time → Premium subscription)
++
++### Goals (Year 1)
++
++| Metric | Target |
++|--------|--------|
++| Downloads | 50,000 |
++| Free tier users | 40,000 |
++| Standard subscribers | 7,500 (15% conversion) |
++| Premium subscribers | 2,500 (5% of total) |
++| MRR | $20,000 |
++| Annual revenue | $240,000 |
++| Churn rate | < 5% monthly |
++
++## Pricing Optimization
++
++### A/B Testing
++
++Test different pricing strategies:
++- **Test A**: $19.99/year Standard, $49.99/year Premium
++- **Test B**: $24.99/year Standard, $59.99/year Premium
++- **Test C**: Monthly-only pricing (no annual)
++- **Test D**: Annual-only pricing (no monthly)
++
++Measure: Conversion rate, total revenue, LTV
++
++### Price Elasticity
++
++- Start with suggested pricing
++- Monitor conversion rates and revenue
++- Adjust quarterly based on data
++- Consider raising prices gradually as content improves
++
++### Psychological Pricing
++
++- Use .99 pricing ($19.99 not $20.00)
++- Emphasize annual savings ("Save 44%!")
++- Show monthly equivalent for annual ("Only $1.67/month")
++- Anchor with higher price (show Premium to make Standard feel like deal)
++
++## Compliance & Legal
++
++### Subscription Requirements
++
++**Apple App Store**:
++- Clear description of subscription terms
++- Disclose renewal behavior
++- Easy cancellation (must link to subscription management)
++- Privacy policy required
++
++**Google Play Store**:
++- Similar requirements to Apple
++- Free trial disclosure
++- Transparent pricing
++
++**Consumer Protection Laws**:
++- **Auto-renewal disclosure**: Must clearly state subscriptions auto-renew
++- **Easy cancellation**: Cannot make cancellation harder than sign-up
++- **Refund policy**: Honor App Store refund policies (Apple/Google handle)
++
++### Tax & Accounting
++
++- Sales tax handled by Apple/Google for IAP
++- For web subscriptions, may need to collect VAT (EU), GST (AU/CA), etc.
++- Use Stripe Tax or similar service
++- Consult accountant for compliance
++
++## Revenue Projections
++
++### Conservative Estimate (Year 1)
++
++**Assumptions**:
++- 50,000 downloads
++- 20% free tier retention
++- 15% free → Standard conversion
++- 5% free → Premium conversion
++- 10% Standard → Premium upgrade
++- 5% monthly churn
++
++**Monthly Recurring Revenue (MRR)**:
++- Standard annual: 6,000 users × $1.67 = $10,020/month
++- Standard monthly: 500 users × $2.99 = $1,495/month
++- Premium annual: 2,000 users × $4.17 = $8,340/month
++- Premium monthly: 300 users × $5.99 = $1,797/month
++- **Total MRR**: ~$21,650
++
++**Annual Revenue**: ~$260,000
++
++### Optimistic Estimate (Year 1)
++
++**Assumptions**:
++- 100,000 downloads
++- 25% conversion to paid
++- 10% free → Premium direct
++
++**Annual Revenue**: ~$600,000
++
++### Break-Even Analysis
++
++**Costs (estimated annual)**:
++- Development (2 FTE): $200,000
++- Content creation/advisory board: $50,000
++- Infrastructure (hosting, CDN): $15,000
++- App Store fees (30%): $78,000
++- Marketing: $50,000
++- **Total**: ~$393,000
++
++**Break-even**: ~16,000 paying subscribers (mix of Standard/Premium)
++
++## Recommendations
++
++1. **Launch with all three tiers** (Free, Standard, Premium) to capture different user segments
++
++2. **Emphasize annual subscriptions** for predictable revenue and lower churn
++
++3. **Offer 7-day free trial** to maximize conversions
++
++4. **Use tiered pricing** to create upgrade path and anchor higher value
++
++5. **Start with suggested pricing** ($19.99/$49.99), adjust based on data
++
++6. **Implement referral program** after initial launch to drive organic growth
++
++7. **Focus on retention**: Great content and regular updates keep subscribers
++
++8. **Monitor metrics closely**: Optimize pricing and features based on user behavior
++
++9. **Consider one-time purchase** for Standard tier to attract subscription-averse users
++
++10. **Invest in educational content marketing** to build trust and drive downloads
++
++---
++
++**This pricing strategy balances accessibility, value creation, and revenue generation to support sustainable development of NaturoPath: 101.**
+diff --git a/ui-wireframes.md b/ui-wireframes.md
+new file mode 100644
+index 0000000..cda323c
+--- /dev/null
++++ b/ui-wireframes.md
+@@ -0,0 +1,655 @@
++# UI / UX Notes & Wireframes — NaturoPath: 101
++
++## Design Principles
++
++### 1. Safety First
++- Prominent disclaimers
++- Clear red flag warnings
++- Evidence levels visible
++- Easy access to "when to see a doctor" information
++
++### 2. Clarity & Readability
++- Clean, uncluttered interface
++- High contrast for readability
++- Clear typography hierarchy
++- Accessible design (WCAG 2.1 AA minimum)
++
++### 3. Trust & Authority
++- Professional, scientific aesthetic
++- Display advisory board credentials
++- Show references and evidence levels
++- Transparent about limitations
++
++### 4. User-Friendly
++- Intuitive navigation
++- Fast search with instant results
++- Offline capability clearly indicated
++- Consistent interaction patterns
++
++## Color Palette
++
++### Primary Colors
++- **Primary Green**: #2D7A3E (trust, natural, healing)
++  - Light: #4A9D5F
++  - Dark: #1F5A2D
++- **Secondary Sage**: #8B9D83 (calm, natural)
++- **Accent Gold**: #D4A855 (premium, quality)
++
++### Semantic Colors
++- **Success**: #2D7A3E
++- **Warning**: #E67E22 (moderate severity)
++- **Danger**: #C0392B (severe contraindications)
++- **Info**: #3498DB
++
++### Neutrals
++- **Background**: #FAFAF8 (warm white)
++- **Surface**: #FFFFFF
++- **Text Primary**: #2C3E50
++- **Text Secondary**: #7F8C8D
++- **Divider**: #E0E0E0
++
++## Typography
++
++### Font Families
++- **Headings**: Merriweather or Lora (serif for authority)
++- **Body**: Inter or Open Sans (sans-serif for readability)
++- **Scientific Names**: Georgia (italic serif)
++
++### Type Scale
++- **H1**: 32px / 2rem (page titles)
++- **H2**: 24px / 1.5rem (section headers)
++- **H3**: 20px / 1.25rem (subsections)
++- **Body**: 16px / 1rem (main content)
++- **Small**: 14px / 0.875rem (metadata, captions)
++- **Tiny**: 12px / 0.75rem (disclaimers, fine print)
++
++## Iconography
++
++- **Style**: Outline/line icons (Material Icons or custom)
++- **Size**: 24px default, 16px small, 32px large
++- **Color**: Inherit from text or use semantic colors
++
++## Layout & Navigation
++
++### Mobile (Primary Target)
++
++#### Bottom Navigation (5 tabs max)
++1. **Home/Search** (magnifying glass icon)
++2. **Browse** (book/list icon)
++3. **Saved** (bookmark icon) - saved plants/conditions
++4. **Medicine Cabinet** (medical cross icon) - Premium feature, locked for free users
++5. **More** (three dots icon) - settings, about, subscription
++
++#### Top App Bar
++- Back button (when applicable)
++- Page title
++- Actions (search, filter, share)
++- Overflow menu (three dots)
++
++### Tablet/Desktop
++
++#### Sidebar Navigation
++- Persistent sidebar on left (200-250px)
++- Search bar at top
++- Navigation categories
++- Bottom: User profile/settings
++
++#### Main Content Area
++- Responsive grid (1-3 columns depending on screen width)
++- Floating action button for quick actions (mobile)
++- Breadcrumbs for navigation hierarchy
++
++## Screen Wireframes
++
++### 1. Home / Search Screen
++
++```
++┌────────────────────────────────────┐
++│  NaturoPath: 101           [≡]     │ ← Header
++├────────────────────────────────────┤
++│                                    │
++│  ┌──────────────────────────────┐ │
++│  │ 🔍 Search conditions, plants │ │ ← Search bar
++│  └──────────────────────────────┘ │
++│                                    │
++│  Quick Links:                      │
++│  ┌────────┐ ┌────────┐ ┌────────┐│
++│  │ Common │ │ Immune │ │  Pain  ││ ← Category chips
++│  │  Cold  │ │ Support│ │ Relief ││
++│  └────────┘ └────────┘ └────────┘│
++│                                    │
++│  Recently Viewed                   │
++│  ┌──────────────────────────────┐ │
++│  │ 🌿 Echinacea                 │ │
++│  │ Immune support • Moderate... │ │
++│  │ ⭐⭐⭐⭐ Human trial evidence │ │
++│  └──────────────────────────────┘ │
++│  ┌──────────────────────────────┐ │
++│  │ 💊 Common Cold               │ │
++│  │ Upper respiratory infection  │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  Featured Content                  │
++│  ┌──────────────────────────────┐ │
++│  │ [Image: Valerian]            │ │
++│  │ Sleep Better Naturally       │ │
++│  │ Learn about Valerian root    │ │
++│  └──────────────────────────────┘ │
++│                                    │
++└────────────────────────────────────┘
++│ [🏠] [📚] [🔖] [💊] [⋯] │ ← Bottom nav
++└────────────────────────────────────┘
++```
++
++### 2. Search Results Screen
++
++```
++┌────────────────────────────────────┐
++│  ← Search Results         [Filter] │
++├────────────────────────────────────┤
++│  ┌──────────────────────────────┐ │
++│  │ 🔍 sleep                 [x] │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  [Conditions] [Plants] [All]       │ ← Tabs
++│  ────────────                      │
++│                                    │
++│  3 conditions, 5 plants found      │
++│                                    │
++│  CONDITIONS                        │
++│  ┌──────────────────────────────┐ │
++│  │ Insomnia                     │ │
++│  │ Sleep disorder • 3 remedies  │ │
++│  │ ⭐⭐⭐⭐ Human trial evidence │ │
++│  └──────────────────────────────┘ │
++│  ┌──────────────────────────────┐ │
++│  │ Jet Lag                      │ │
++│  │ Time zone disorder • 2 rem...│ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  PLANTS                            │
++│  ┌──────────────────────────────┐ │
++│  │ 🌿 Valerian                  │ │
++│  │ Valeriana officinalis        │ │
++│  │ Sleep aid • Sedative         │ │
++│  │ ⚠️ Liver caution              │ │
++│  └──────────────────────────────┘ │
++│  ┌──────────────────────────────┐ │
++│  │ 🌿 Passionflower             │ │
++│  │ Passiflora incarnata         │ │
++└────────────────────────────────────┘
++```
++
++### 3. Condition Detail Screen
++
++```
++┌────────────────────────────────────┐
++│  ←  Common Cold          [🔖] [⋯]  │
++├────────────────────────────────────┤
++│                                    │
++│  ⚠️ NOT MEDICAL ADVICE             │
++│  See a doctor if symptoms worsen   │
++│                                    │
++│  OVERVIEW                          │
++│  The common cold is a viral        │
++│  infection of the upper respiratory│
++│  tract...                          │
++│                                    │
++│  SYMPTOMS                          │
++│  • Runny or stuffy nose            │
++│  • Sore throat                     │
++│  • Cough                           │
++│  • Sneezing                        │
++│  • Mild headache                   │
++│                                    │
++│  🚨 WHEN TO SEE A DOCTOR           │
++│  ┌──────────────────────────────┐ │
++│  │ • Fever > 101.3°F (38.5°C)   │ │
++│  │   lasting > 3 days            │ │
++│  │ • Symptoms > 10 days          │ │
++│  │ • Severe headache/facial pain │ │
++│  │ • Difficulty breathing        │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  HERBAL REMEDIES                   │
++│  ┌──────────────────────────────┐ │
++│  │ 🌿 Echinacea purpurea        │ │
++│  │                              │ │
++│  │ Take at first sign of cold.  │ │
++│  │ May reduce duration and      │ │
++│  │ severity when taken early.   │ │
++│  │                              │ │
++│  │ ⭐⭐⭐⭐ Human trial evidence │ │
++│  │                              │ │
++│  │ [View Plant Details →]       │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  REFERENCES                        │
++│  📄 Karsch-Völk et al. (2014)     │
++│     Cochrane Database Syst Rev    │
++│     [View →]                       │
++│                                    │
++│  Evidence Level: ⭐⭐⭐⭐           │
++│  Last Reviewed: Jan 15, 2024      │
++│                                    │
++└────────────────────────────────────┘
++```
++
++### 4. Plant Detail Screen
++
++```
++┌────────────────────────────────────┐
++│  ←  Echinacea            [🔖] [⋯]  │
++├────────────────────────────────────┤
++│                                    │
++│  ┌──────────────────────────────┐ │
++│  │  [Purple coneflower image]   │ │ ← Image carousel
++│  │        ●  ○  ○  ○            │ │   (swipe)
++│  └──────────────────────────────┘ │
++│                                    │
++│  Echinacea purpurea                │ ← Scientific name
++│  Purple Coneflower • Echinacea     │ ← Common names
++│                                    │
++│  ⭐⭐⭐⭐ Human trial evidence      │
++│                                    │
++│  ⚠️ CONTRAINDICATIONS              │
++│  ┌──────────────────────────────┐ │
++│  │ 🔴 Autoimmune conditions     │ │
++│  │    May worsen symptoms       │ │
++│  │                              │ │
++│  │ 🟡 Pregnancy - consult doctor│ │
++│  │                              │ │
++│  │ ⚠️ Asteraceae allergies      │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  DESCRIPTION                       │
++│  Native to North America, widely   │
++│  recognized for immune-supporting  │
++│  properties...                     │
++│                                    │
++│  USED FOR                          │
++│  • Common Cold                     │
++│  • Upper Respiratory Infections    │
++│  • Immune Support                  │
++│                                    │
++│  [View All Preparation Methods →]  │
++│                                    │
++│  QUICK PREPARATION                 │
++│  ┌──────────────────────────────┐ │
++│  │ 🍵 Tincture (Recommended)    │ │
++│  │                              │ │
++│  │ Dosage: 2-4 ml (40-80 drops) │ │
++│  │ Frequency: 3x daily          │ │
++│  │ Duration: 7-10 days max      │ │
++│  │                              │ │
++│  │ Take at first sign of cold   │ │
++│  │ for best results.            │ │
++│  │                              │ │
++│  │ [See Full Instructions →]    │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  ▼ PHYTOCHEMICALS                  │ ← Expandable
++│  ▼ HARVESTING & CULTIVATION        │   sections
++│  ▼ RESEARCH & REFERENCES           │
++│                                    │
++└────────────────────────────────────┘
++```
++
++### 5. Medicine Cabinet Screen (Premium)
++
++```
++┌────────────────────────────────────┐
++│  ←  Medicine Cabinet       [+] [⋯] │
++├────────────────────────────────────┤
++│  🔒 Your data is encrypted and     │
++│  stored locally only               │
++│                                    │
++│  MY MEDICATIONS                    │
++│  ┌──────────────────────────────┐ │
++│  │ Lisinopril                   │ │
++│  │ 10mg • 1x daily              │ │
++│  │ For: High blood pressure     │ │
++│  │ ⚠️ 1 interaction found       │ │
++│  └──────────────────────────────┘ │
++│  ┌──────────────────────────────┐ │
++│  │ Aspirin                      │ │
++│  │ 81mg • 1x daily              │ │
++│  │ For: Heart health            │ │
++│  │ ⚠️ 2 interactions found      │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  ┌────────────────────────────────┐│
++│  │ [+ Add Medication]             ││
++│  └────────────────────────────────┘│
++│                                    │
++│  HERBS I'M CONSIDERING             │
++│  ┌──────────────────────────────┐ │
++│  │ 🌿 Ginkgo biloba             │ │
++│  │ For: Memory support          │ │
++│  │ ⚠️ MODERATE interaction      │ │
++│  │    with Aspirin              │ │
++│  │                              │ │
++│  │ [Check Interactions →]       │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  ┌────────────────────────────────┐│
++│  │ [+ Add Herb to Check]          ││
++│  └────────────────────────────────┘│
++│                                    │
++└────────────────────────────────────┘
++```
++
++### 6. Interaction Check Results
++
++```
++┌────────────────────────────────────┐
++│  ←  Interaction Check              │
++├────────────────────────────────────┤
++│                                    │
++│  🔴 1 MAJOR INTERACTION FOUND      │
++│  🟡 1 MODERATE INTERACTION         │
++│                                    │
++│  ┌──────────────────────────────┐ │
++│  │ 🔴 MAJOR                     │ │
++│  │                              │ │
++│  │ Ginkgo biloba × Aspirin      │ │
++│  │                              │ │
++│  │ ⚠️ INCREASED BLEEDING RISK   │ │
++│  │                              │ │
++│  │ Mechanism:                   │ │
++│  │ Both substances have         │ │
++│  │ antiplatelet effects. Ginkgo │ │
++│  │ may potentiate the effect of │ │
++│  │ aspirin, increasing bleeding │ │
++│  │ risk.                        │ │
++│  │                              │ │
++│  │ Recommendation:              │ │
++│  │ • Consult your doctor before │ │
++│  │   combining these substances │ │
++│  │ • Monitor for unusual        │ │
++│  │   bruising or bleeding       │ │
++│  │ • Discontinue ginkgo 2 weeks │ │
++│  │   before surgery             │ │
++│  │                              │ │
++│  │ References:                  │ │
++│  │ 📄 Bent et al. (2005)        │ │
++│  │    [View →]                  │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  ┌──────────────────────────────┐ │
++│  │ 🟡 MODERATE                  │ │
++│  │                              │ │
++│  │ Ginkgo biloba × Lisinopril   │ │
++│  │                              │ │
++│  │ Potential blood pressure     │ │
++│  │ effects...                   │ │
++│  │                              │ │
++│  │ [View Details →]             │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  ⚠️ IMPORTANT DISCLAIMER           │
++│  This is informational only. Always│
++│  consult your healthcare provider  │
++│  before combining medications.     │
++│                                    │
++│  [Share with Doctor] [Save Report] │
++│                                    │
++└────────────────────────────────────┘
++```
++
++### 7. Browse/Categories Screen
++
++```
++┌────────────────────────────────────┐
++│  Browse                    [Search]│
++├────────────────────────────────────┤
++│                                    │
++│  [All] [Conditions] [Plants]       │ ← Tabs
++│       ───────────                  │
++│                                    │
++│  BY BODY SYSTEM                    │
++│  ┌────────────┐  ┌────────────┐   │
++│  │ 🫁         │  │ 💓         │   │
++│  │ Respiratory│  │ Cardio-    │   │
++│  │ 8 items    │  │ vascular   │   │
++│  └────────────┘  │ 6 items    │   │
++│  ┌────────────┐  └────────────┘   │
++│  │ 🧠         │  ┌────────────┐   │
++│  │ Nervous    │  │ 🦴         │   │
++│  │ System     │  │ Musculo-   │   │
++│  │ 12 items   │  │ skeletal   │   │
++│  └────────────┘  │ 10 items   │   │
++│                  └────────────┘   │
++│                                    │
++│  BY EVIDENCE LEVEL                 │
++│  ⭐⭐⭐⭐⭐ Strong Clinical (12)     │
++│  ⭐⭐⭐⭐ Human Trials (34)         │
++│  ⭐⭐⭐ Animal Studies (28)         │
++│  ⭐⭐ In Vitro (15)                │
++│  ⭐ Traditional Use (12)           │
++│                                    │
++│  POPULAR CONDITIONS                │
++│  • Common Cold                     │
++│  • Insomnia                        │
++│  • Mild Anxiety                    │
++│  • Headache                        │
++│  • Indigestion                     │
++│  [View All 101 →]                  │
++│                                    │
++└────────────────────────────────────┘
++```
++
++### 8. Settings/Account Screen
++
++```
++┌────────────────────────────────────┐
++│  ←  Settings                       │
++├────────────────────────────────────┤
++│                                    │
++│  ACCOUNT                           │
++│  user@example.com                  │
++│  Premium • Expires Dec 31, 2024    │
++│  [Manage Subscription →]           │
++│                                    │
++│  ─────────────────────────────────│
++│                                    │
++│  CONTENT                           │
++│  Downloaded: 50/101 conditions     │
++│  Last update: Jan 15, 2024         │
++│  [Download Updates →]              │
++│  [Manage Offline Content →]        │
++│                                    │
++│  ─────────────────────────────────│
++│                                    │
++│  PREFERENCES                       │
++│  🔔 Notifications           [On ↻] │
++│  📱 Download over Wi-Fi only [On ↻]│
++│  🌓 Dark mode               [Off ↻]│
++│  📏 Text size               [M ↻]  │
++│                                    │
++│  ─────────────────────────────────│
++│                                    │
++│  ABOUT                             │
++│  Version 1.0.0                     │
++│  [Privacy Policy →]                │
++│  [Terms of Service →]              │
++│  [Disclaimer →]                    │
++│  [Advisory Board →]                │
++│  [Licenses & Attributions →]       │
++│                                    │
++│  ─────────────────────────────────│
++│                                    │
++│  [Sign Out]                        │
++│                                    │
++└────────────────────────────────────┘
++```
++
++### 9. Subscription/Paywall Screen
++
++```
++┌────────────────────────────────────┐
++│  ←                         [Skip]  │
++├────────────────────────────────────┤
++│                                    │
++│         🌿 NaturoPath: 101         │
++│                                    │
++│    Unlock Your Natural Health      │
++│           Journey                  │
++│                                    │
++│  ┌──────────────────────────────┐ │
++│  │ ✓ Access all 101 conditions  │ │
++│  │ ✓ Detailed plant profiles    │ │
++│  │ ✓ Offline access              │ │
++│  │ ✓ Evidence-based information │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  ┌──────────────────────────────┐ │
++│  │ STANDARD      [●] Selected   │ │
++│  │                              │ │
++│  │ $19.99/year                  │ │
++│  │ or $2.99/month               │ │
++│  │                              │ │
++│  │ • Full catalog access        │ │
++│  │ • Offline content bundles    │ │
++│  │ • Regular updates            │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  ┌──────────────────────────────┐ │
++│  │ PREMIUM       [ ] Select     │ │
++│  │                              │ │
++│  │ $49.99/year                  │ │
++│  │ or $5.99/month               │ │
++│  │                              │ │
++│  │ Everything in Standard, plus:│ │
++│  │ • Medicine Cabinet           │ │
++│  │ • Interaction checker        │ │
++│  │ • Priority content updates   │ │
++│  └──────────────────────────────┘ │
++│                                    │
++│  ┌────────────────────────────────┐│
++│  │    [Start 7-Day Free Trial]    ││
++│  └────────────────────────────────┘│
++│                                    │
++│  Billed annually. Cancel anytime.  │
++│  [Restore Purchases]               │
++│                                    │
++└────────────────────────────────────┘
++```
++
++## Interaction Patterns
++
++### Search
++- **Debounced typeahead** (300ms delay)
++- Show results after 2 characters typed
++- Recent searches saved locally
++- Clear button to clear search
++- Filter chips for refinement
++
++### Lists
++- **Infinite scroll** or **Load More** button
++- Pull-to-refresh on mobile
++- Empty states with helpful messaging
++- Loading skeletons for better UX
++
++### Cards
++- Tap to open details
++- Long-press for quick actions (save, share)
++- Swipe actions where appropriate (save, delete)
++
++### Forms
++- Inline validation
++- Clear error messages
++- Autocomplete for medication names
++- Barcode scanner for medication entry (Premium)
++
++## Accessibility
++
++### WCAG 2.1 AA Compliance
++- Minimum contrast ratio 4.5:1 for text
++- Tap targets minimum 44x44px
++- Screen reader support (semantic HTML/widgets)
++- Keyboard navigation (desktop/web)
++- Focus indicators visible
++- Alternative text for all images
++- Captions/transcripts for any video content
++
++### Responsive Text
++- Support for user-defined text sizes
++- Reflow content without horizontal scroll
++- Readable at 200% zoom
++
++### Color Independence
++- Don't rely solely on color to convey information
++- Use icons + color for severity (e.g., red + ⚠️)
++
++## Loading States
++
++### Skeletons
++Use content placeholders (gray rectangles) instead of spinners where possible for better perceived performance.
++
++### Progressive Loading
++- Load critical content first (text)
++- Images load progressively (blur-up technique)
++- Defer below-fold content
++
++### Offline Indicators
++- Clear badge when offline
++- Indicate which content is available offline
++- Explain limitations when offline
++
++## Error States
++
++### Friendly Error Messages
++❌ Bad: "Error 404"
++✅ Good: "We couldn't find that plant. Try searching for something else."
++
++### Actionable Errors
++Provide clear next steps:
++- "No internet connection. [Retry]"
++- "Subscription expired. [Renew Now]"
++
++### Empty States
++Make empty states helpful:
++- "No saved plants yet. Start by searching or browsing conditions."
++- Include illustration + action button
++
++## Onboarding
++
++### First-Time User Experience
++1. **Welcome screen**: Brief intro, value proposition
++2. **Feature highlights**: 3-4 screens showcasing key features
++3. **Permission requests**: Explain why each permission is needed
++4. **Optional account creation**: Allow skip, can create later
++5. **Quick tutorial**: Interactive overlay on first search/navigation
++
++### Tooltips
++- Use sparingly
++- Dismissible
++- Don't show repeatedly
++
++## Platform-Specific Considerations
++
++### iOS
++- Follow Human Interface Guidelines
++- Use native components (SF Symbols)
++- Haptic feedback for interactions
++- Swipe gestures (back, actions)
++- Share sheet integration
++
++### Android
++- Follow Material Design 3
++- Use Material You theming (dynamic colors)
++- Bottom sheets for actions
++- Floating Action Button where appropriate
++- Share intent integration
++
++### Desktop/Web
++- Responsive layout (1-3 columns)
++- Keyboard shortcuts
++- Hover states for interactive elements
++- Context menus (right-click)
++- Print-friendly styles for plant/condition pages
++
++---
++
++**These wireframes and guidelines provide a foundation for building an intuitive, trustworthy, and accessible user experience for NaturoPath: 101.**
